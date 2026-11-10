@@ -139,6 +139,16 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
  [data-mode="game"] .foot{margin-top:.6rem;padding-top:.6rem;font-size:.8125rem;line-height:1.45}
 
 }
+@keyframes enter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.sec.enter,#top.enter{animation:enter .45s cubic-bezier(.2,.7,.2,1) both}
+.sec.enter .tile,.sec.enter .panel,.go.enter .go__c{animation:enter .55s cubic-bezier(.2,.7,.2,1) both}
+.sec.enter .tile:nth-child(2),.sec.enter .panel:nth-child(2){animation-delay:.05s}
+.sec.enter .tile:nth-child(3){animation-delay:.1s}
+.sec.enter .tile:nth-child(4){animation-delay:.15s}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.28s;animation-timing-function:ease}
+.tab,.go__c{transition:background-color .2s,color .2s,border-color .2s,transform .2s}
+.go__c:hover{transform:translateY(-3px)}
+@media(prefers-reduced-motion:reduce){.sec.enter,#top.enter,.sec.enter *{animation:none!important}}
 </style>
 </head>
 <body>
@@ -374,7 +384,10 @@ function renderVal(){
 function render(){cp.sync();ct.sync();renderP1();renderScatter();renderP2()}
 render();renderVal();
 const TABS=["top","q1","q2","proof"];
-function show(id){if(!TABS.includes(id))id="top";TABS.forEach(t=>{$(t).hidden=t!==id});document.querySelectorAll(".tab").forEach(b=>{const on=b.dataset.t===id;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1});try{history.replaceState(null,"","#"+id)}catch(e){}window.scrollTo(0,0)}
+let cur_tab=null;
+function swap(id){TABS.forEach(t=>{const e=$(t);e.hidden=t!==id;e.classList.remove("enter")});$(id).classList.add("enter");$(id).scrollTop=0;document.querySelectorAll(".tab").forEach(b=>{const on=b.dataset.t===id;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1});try{history.replaceState(null,"","#"+id)}catch(e){}window.scrollTo(0,0)}
+function show(id){if(!TABS.includes(id))id="top";if(id===cur_tab)return;const first=cur_tab===null;cur_tab=id;
+  if(!first&&document.startViewTransition&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.startViewTransition(()=>swap(id));else swap(id)}
 document.querySelectorAll(".go__c").forEach(b=>b.onclick=()=>show(b.dataset.t));
 document.querySelectorAll(".tab").forEach((b,i,all)=>{b.onclick=()=>show(b.dataset.t);b.onkeydown=e=>{const d=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(d){const n=all[(i+d+all.length)%all.length];n.focus();show(n.dataset.t);e.preventDefault()}}});
 window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
