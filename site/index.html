@@ -199,6 +199,34 @@ html:not(.choosing) #choose{display:none}
 @media(min-width:1000px) and (min-height:620px){[data-mode="article"] .foot{margin-top:.6rem;padding-top:.6rem;font-size:.8125rem;line-height:1.45;border-top:1px solid var(--rule)}[data-mode="article"] .foot p{margin-bottom:.25rem}}
 
 
+
+/* Opening animation: chosen half expands, then the page builds in. Mode-specific. */
+#choose{transition:opacity .45s ease,grid-template-columns .65s cubic-bezier(.7,0,.2,1),grid-template-rows .6s cubic-bezier(.7,0,.2,1)}
+.pick{min-width:0;overflow:hidden}
+#choose.leaving{pointer-events:none;grid-template-rows:minmax(0,0fr) minmax(0,1fr)}
+.choose__head{min-height:0;overflow:hidden}
+#choose{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+#choose.pg{grid-template-columns:minmax(0,1fr) minmax(0,0fr)}
+#choose.pa{grid-template-columns:minmax(0,0fr) minmax(0,1fr)}
+#choose.leaving .choose__head{transform:translateY(-101%);transition:transform .5s cubic-bezier(.7,0,.2,1)}
+#choose.pg .pick--article>*,#choose.pa .pick--game>*{opacity:0;transition:opacity .2s}
+#choose.fade{opacity:0}
+#sweep{position:fixed;left:0;right:0;z-index:210;pointer-events:none;transform-origin:left center;opacity:0}
+html[data-mode="game"] #sweep{top:38vh;height:10px;background:#ffd23f}
+html[data-mode="article"] #sweep{top:0;height:4px;background:#c8102e}
+html[data-mode="game"] #sweep.go{animation:sweepG 1s cubic-bezier(.6,0,.2,1) both}
+html[data-mode="article"] #sweep.go{animation:sweepA .9s ease both}
+@keyframes sweepG{0%{transform:scaleX(0);opacity:1}55%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1) translateX(100%);opacity:0}}
+@keyframes sweepA{0%{transform:scaleX(0);opacity:1}60%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+@keyframes openG{from{opacity:0;transform:translateY(38px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes openA{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes mastIn{from{transform:translateY(-100%)}to{transform:none}}
+@keyframes lineOn2{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+html.opening[data-mode="game"] .oa{animation:openG .65s cubic-bezier(.2,.9,.25,1) calc(var(--d,0ms) + .15s) both!important}
+html.opening[data-mode="article"] .oa{animation:openA .8s ease calc(var(--d,0ms) + .15s) both!important}
+html.opening[data-mode="game"] .hero__line{animation:lineOn2 .9s cubic-bezier(.2,.7,.2,1) .3s both}
+html.opening .masthead{animation:mastIn .55s cubic-bezier(.2,.8,.2,1) both}
+@media(prefers-reduced-motion:reduce){#sweep{display:none}}
 @keyframes enter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .sec.enter,#top.enter{animation:enter .45s cubic-bezier(.2,.7,.2,1) both}
 .sec.enter .tile,.sec.enter .panel,.go.enter .go__c{animation:enter .55s cubic-bezier(.2,.7,.2,1) both}
@@ -214,6 +242,7 @@ html:not(.choosing) #choose{display:none}
 </style>
 </head>
 <body>
+<div id="sweep" aria-hidden="true"></div>
 <div id="choose" role="dialog" aria-modal="true" aria-labelledby="choose-t" hidden>
   <div class="choose__head">
     <p class="choose__brand">Pocket Myth</p>
@@ -467,16 +496,29 @@ document.querySelectorAll(".go__c").forEach(b=>b.onclick=()=>show(b.dataset.t));
 document.querySelectorAll(".tab").forEach((b,i,all)=>{b.onclick=()=>show(b.dataset.t);b.onkeydown=e=>{const d=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(d){const n=all[(i+d+all.length)%all.length];n.focus();show(n.dataset.t);e.preventDefault()}}});
 window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
 show(location.hash.slice(1));
-document.querySelectorAll('input[name="mode"]').forEach(r=>{r.checked=r.value===document.documentElement.dataset.mode;r.onchange=()=>{document.documentElement.dataset.mode=r.value;try{localStorage.setItem("mbs-mode",r.value)}catch(e){}render();renderVal()}});
+document.querySelectorAll('input[name="mode"]').forEach(r=>{r.checked=r.value===document.documentElement.dataset.mode;r.onchange=()=>{document.documentElement.dataset.mode=r.value;try{localStorage.setItem("mbs-mode",r.value)}catch(e){}render();renderVal();playOpen(r.value)}});
 document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement.tagName!=="INPUT"){e.preventDefault();$("pl").focus()}});
 
+let openTimer=null;
+function playOpen(mode){const d=document.documentElement;if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;clearTimeout(openTimer);
+  d.classList.remove("opening");document.querySelectorAll(".oa").forEach(e=>e.classList.remove("oa"));
+  const sec=document.querySelector("main>section:not([hidden])");if(!sec)return;
+  const step=mode==="game"?55:75;let i=0;
+  sec.querySelectorAll("h1,.hero__dek,.hero__meta,.hero__answer,.controls--hero,.go__c,h2,.sec__intro,.help,.verdict,.tile,.panel,.note").forEach(e=>{if(!e.offsetParent&&e.getClientRects().length===0)return;e.style.setProperty("--d",(i++*step)+"ms");e.classList.add("oa")});
+  const sw=$("sweep");sw.classList.remove("go");void d.offsetWidth;d.classList.add("opening");sw.classList.add("go");
+  openTimer=setTimeout(()=>{d.classList.remove("opening");document.querySelectorAll(".oa").forEach(e=>e.classList.remove("oa"));sw.classList.remove("go")},2800)}
 (function(){const ch=$("choose");if(!ch)return;ch.hidden=false;
  const first=ch.querySelector(".pick--game");
  if(document.documentElement.classList.contains("choosing"))setTimeout(()=>first.focus(),50);
  ch.querySelectorAll(".pick").forEach(b=>b.onclick=()=>{const m=b.dataset.m;document.documentElement.dataset.mode=m;
   try{localStorage.setItem("mbs-mode",m)}catch(e){}
   document.querySelectorAll('input[name="mode"]').forEach(r=>r.checked=r.value===m);
-  document.documentElement.classList.remove("choosing");render();renderVal();show("top");$("pl").blur()});
+  render();renderVal();show("top");$("pl").blur();
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.remove("choosing");return}
+  ch.classList.add("leaving",m==="game"?"pg":"pa");
+  setTimeout(()=>playOpen(m),450);
+  setTimeout(()=>ch.classList.add("fade"),700);
+  setTimeout(()=>{document.documentElement.classList.remove("choosing");ch.classList.remove("leaving","pg","pa","fade")},1150)});
  ch.addEventListener("keydown",e=>{if(e.key==="Tab"){const bs=[...ch.querySelectorAll(".pick")];const i=bs.indexOf(document.activeElement);e.preventDefault();bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}if(e.key==="ArrowLeft"||e.key==="ArrowRight")ch.querySelectorAll(".pick")[e.key==="ArrowLeft"?0:1].focus()})})();
 
 
