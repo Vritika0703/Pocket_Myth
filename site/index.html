@@ -236,7 +236,7 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
     </div>
     <div class="tiles">
       <div class="tile"><div class="k">Direction right</div><div class="v">71%</div><div class="s">went up or down as predicted</div></div>
-      <div class="tile"><div class="k">Match (0 to 1)</div><div class="v">0.52</div><div class="s">all 28 players. Not luck (p = 0.004)</div></div>
+      <div class="tile"><div class="k">Match (−1 to 1)</div><div class="v">0.52</div><div class="s">all 28 players. Not luck (p = 0.004)</div></div>
       <div class="tile"><div class="k">Players with lots of data</div><div class="v">0.93</div><div class="s">11 players, 50+ routes each</div></div>
       <div class="tile"><div class="k">Real vs predicted change</div><div class="v sm">~3× bigger</div><div class="s">trust the direction, not the size</div></div>
     </div>
@@ -244,7 +244,7 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
     </div>
     <div class="col">
     <figure class="panel"><svg id="val" viewBox="0 0 760 520" role="img" aria-label="Predicted against actual change for 28 receivers"></svg>
-      <ul class="legend"><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:var(--ink)"><circle cx="6" cy="6" r="5"/></svg>50+ routes under both QBs</li><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:none;stroke:var(--edge);stroke-width:2"><circle cx="6" cy="6" r="4.5"/></svg>fewer routes</li><li>Each mark is one receiver. Up and right = the model was right. Hover for the name.</li></ul>
+      <ul class="legend"><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:var(--ink)"><circle cx="6" cy="6" r="5"/></svg>50+ routes under both QBs</li><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:none;stroke:var(--edge);stroke-width:2"><circle cx="6" cy="6" r="4.5"/></svg>fewer routes</li><li>Each mark is one receiver. Top-right or bottom-left = the model got the direction right. Hover for the name.</li></ul>
     </figure>
     </div>
   </div>
