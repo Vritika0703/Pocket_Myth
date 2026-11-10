@@ -169,24 +169,27 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 [data-mode="article"] .hero{padding-top:clamp(1rem,3vh,2.5rem);padding-bottom:1rem}
 [data-mode="article"] h1{font-size:clamp(2rem,1rem + 4.2vh + 1.5vw,3.5rem)}
 /* Mode chooser */
-#choose{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index:200;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);margin:0;animation:fadein .35s ease both}
+#choose{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index:200;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto minmax(0,1fr);margin:0;animation:fadein .35s ease both}
 html.choosing #choose{display:grid}
 html:not(.choosing) #choose{display:none}
 .pick{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;height:100%;margin:0;gap:.6rem;padding:clamp(1.5rem,6vw,5rem);text-align:left;border:0;cursor:pointer;font-family:var(--ui);transition:filter .25s}
 .pick small{font:600 .8125rem/1 var(--ui);letter-spacing:.1em;text-transform:uppercase;opacity:.75}
-.pick b{font:800 clamp(2.5rem,7vw,5.5rem)/.92 "Barlow Condensed",sans-serif;text-transform:uppercase}
+.pick b{font:800 clamp(2.25rem,6vw,5rem)/.92 "Barlow Condensed",sans-serif;text-transform:uppercase}
 .pick span{max-width:30ch;font-size:1.125rem;line-height:1.45;opacity:.85}
-.pick i{margin-top:.75rem;font:600 1rem var(--ui);font-style:normal;border-bottom:2px solid currentColor;align-self:flex-start;padding-bottom:.15rem}
+.pick i{margin-top:1rem;font:600 1.0625rem var(--ui);font-style:normal;align-self:flex-start;padding:.7rem 1.2rem;border:2px solid currentColor;border-radius:2px;transition:background-color .2s,color .2s}
+.pick--game:hover i,.pick--game:focus-visible i{background:#ffd23f;border-color:#ffd23f;color:#0c3326}
+.pick--article:hover i,.pick--article:focus-visible i{background:#1c1a16;border-color:#1c1a16;color:#faf7f0}
 .pick--game{background:#0c3326 repeating-linear-gradient(90deg,transparent 0 56px,rgba(255,255,255,.04) 56px 112px);color:#f4f1e8}
-.pick--game i{border-color:#ffd23f}
 .pick--article{background:#faf7f0;color:#1c1a16}
 .pick--article b{font-family:Newsreader,Georgia,serif;font-weight:600;text-transform:none;letter-spacing:-.015em;line-height:1}
-.pick--article i{border-color:#c8102e}
 .pick:hover{filter:brightness(1.12)}.pick--article:hover{filter:brightness(.96)}
 .pick:focus-visible{outline:4px solid #ffd23f;outline-offset:-8px}
 .pick--article:focus-visible{outline-color:#c8102e}
-#choose h1{position:absolute;top:1.25rem;left:50%;transform:translateX(-50%);z-index:2;margin:0;max-width:none!important;padding:.35rem 1rem;font:800 1.25rem/1 "Barlow Condensed",sans-serif!important;text-transform:uppercase;letter-spacing:.04em;background:#f4f1e8;color:#0c3326;white-space:nowrap}
-@media(max-width:700px){#choose{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr)}.pick{padding:1.25rem 1.5rem}.pick b{font-size:2.5rem}}
+.choose__head{grid-column:1/-1;text-align:center;padding:1.5rem 1rem 1.25rem;background:#071d15;color:#f4f1e8;border-bottom:3px solid #ffd23f}
+.choose__brand{margin:0 0 .35rem;font:600 .8125rem/1 "Barlow",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#ffd23f}
+#choose h1{margin:0;max-width:none!important;font:800 clamp(1.6rem,6vw,3.5rem)/1 "Barlow Condensed",sans-serif!important;text-transform:uppercase;letter-spacing:.01em;color:#f4f1e8;overflow-wrap:anywhere}
+.choose__sub{max-width:52ch;margin:.6rem auto 0;font:400 1rem/1.45 "Barlow",sans-serif;color:#b4c7bc}
+@media(max-width:700px){#choose{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr) minmax(0,1fr)}.choose__head{padding:1rem}.choose__sub{font-size:.875rem}.pick{padding:1rem 1.25rem;gap:.35rem}.pick b{font-size:2.25rem}.pick span{font-size:.9375rem}.pick i{margin-top:.5rem;padding:.5rem .9rem}}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#choose{animation:none}}
 [data-mode] .controls--hero>.wrap{padding-left:0;padding-right:0}
@@ -207,9 +210,13 @@ html:not(.choosing) #choose{display:none}
 </head>
 <body>
 <div id="choose" role="dialog" aria-modal="true" aria-labelledby="choose-t" hidden>
-  <h1 id="choose-t">Pocket Myth · pick your view</h1>
-  <button class="pick pick--game" data-m="game"><small>Playful · football vibe</small><b>Game<br>mode</b><span>Night-game broadcast look: turf green, big numbers, all on one screen.</span><i>Play it →</i></button>
-  <button class="pick pick--article" data-m="article"><small>Professional · clean</small><b>Article<br>mode</b><span>Newsprint look: calm, serif type, built for reading and scouting reports.</span><i>Read it →</i></button>
+  <div class="choose__head">
+    <p class="choose__brand">Pocket Myth</p>
+    <h1 id="choose-t">How do you want to explore?</h1>
+    <p class="choose__sub">Choose a mode to open the site. Both show the same analysis. You can switch any time with the toggle in the top bar.</p>
+  </div>
+  <button class="pick pick--game" data-m="game"><small>Option 1 · Playful</small><b>Game<br>mode</b><span>Football vibe: night-game broadcast look, turf green, big numbers, everything on one screen.</span><i>Start in Game mode →</i></button>
+  <button class="pick pick--article" data-m="article"><small>Option 2 · Professional</small><b>Article<br>mode</b><span>Clean, calm look with serif type. Built for reading and scouting reports.</span><i>Start in Article mode →</i></button>
 </div>
 <a class="skip" href="#main">Skip to the content</a>
 <header class="masthead" style="display:block">
