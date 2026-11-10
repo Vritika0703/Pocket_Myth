@@ -8,7 +8,7 @@
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-800.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
-<script>(function(){var d=document.documentElement;try{if(!sessionStorage.getItem("mbs-chosen"))d.classList.add("choosing")}catch(e){d.classList.add("choosing")}try{var m=localStorage.getItem("mbs-mode");if(m==="game"||m==="article")document.documentElement.setAttribute("data-mode",m)}catch(e){}})()</script>
+<script>(function(){var d=document.documentElement;d.classList.add("choosing");try{var m=localStorage.getItem("mbs-mode");if(m==="game"||m==="article")document.documentElement.setAttribute("data-mode",m)}catch(e){}})()</script>
 <style>
 html{--good:#8fe3b0;--bad:#ff9a8f}
 html[data-mode="article"]{--good:#1d6b3a;--bad:#b00e28}
@@ -474,7 +474,7 @@ document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement.t
  const first=ch.querySelector(".pick--game");
  if(document.documentElement.classList.contains("choosing"))setTimeout(()=>first.focus(),50);
  ch.querySelectorAll(".pick").forEach(b=>b.onclick=()=>{const m=b.dataset.m;document.documentElement.dataset.mode=m;
-  try{sessionStorage.setItem("mbs-chosen","1");localStorage.setItem("mbs-mode",m)}catch(e){}
+  try{localStorage.setItem("mbs-mode",m)}catch(e){}
   document.querySelectorAll('input[name="mode"]').forEach(r=>r.checked=r.value===m);
   document.documentElement.classList.remove("choosing");render();renderVal();show("top");$("pl").blur()});
  ch.addEventListener("keydown",e=>{if(e.key==="Tab"){const bs=[...ch.querySelectorAll(".pick")];const i=bs.indexOf(document.activeElement);e.preventDefault();bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}if(e.key==="ArrowLeft"||e.key==="ArrowRight")ch.querySelectorAll(".pick")[e.key==="ArrowLeft"?0:1].focus()})})();
