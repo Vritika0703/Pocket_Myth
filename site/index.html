@@ -7,7 +7,7 @@
 <meta name="description" content="Pick an NFL receiver. See how well he gets open against man and zone coverage, and how often he would be open in time for another team's quarterback.">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-800.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=1794340237">
+<link rel="stylesheet" href="styles.css?v=1794340356">
 <script>(function(){var d=document.documentElement;d.classList.add("choosing");try{var m=localStorage.getItem("mbs-mode");if(m==="game"||m==="article")document.documentElement.setAttribute("data-mode",m)}catch(e){}})()</script>
 <style>
 html{--good:#8fe3b0;--bad:#ff9a8f}
@@ -210,7 +210,9 @@ html:not(.choosing) #choose{display:none}
 #choose.pa{grid-template-columns:minmax(0,0fr) minmax(0,1fr)}
 #choose.leaving .choose__head{transform:translateY(-101%);transition:transform .5s cubic-bezier(.7,0,.2,1)}
 #choose.pg .pick--article>*,#choose.pa .pick--game>*{opacity:0;transition:opacity .2s}
+#choose.leaving{animation:none}
 #choose.fade{opacity:0}
+#choose.fade .pick>*{opacity:0;transition:opacity .25s}
 #sweep{position:fixed;left:0;right:0;z-index:210;pointer-events:none;transform-origin:left center;opacity:0}
 html[data-mode="game"] #sweep{top:38vh;height:10px;background:#ffd23f}
 html[data-mode="article"] #sweep{top:0;height:4px;background:#c8102e}
@@ -393,7 +395,7 @@ html:not(.choosing) #choose{display:none}
 </main>
 
 
-<script src="data.js?v=1794340237"></script>
+<script src="data.js?v=1794340356"></script>
 <script>
 const D=window.DATA,$=id=>document.getElementById(id),NS="http://www.w3.org/2000/svg";
 const P=D.players.slice().sort((a,b)=>a.n.localeCompare(b.n));
