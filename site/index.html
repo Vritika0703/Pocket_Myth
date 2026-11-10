@@ -8,7 +8,7 @@
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-800.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
-<script>(function(){try{if(!sessionStorage.getItem("mbs-chosen"))document.documentElement.classList.add("choosing")}catch(e){document.documentElement.classList.add("choosing")}try{var m=localStorage.getItem("mbs-mode");if(m==="game"||m==="article")document.documentElement.setAttribute("data-mode",m)}catch(e){}})()</script>
+<script>(function(){var d=document.documentElement;try{if(!sessionStorage.getItem("mbs-chosen"))d.classList.add("choosing")}catch(e){d.classList.add("choosing")}try{if(!d.classList.contains("choosing")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("intro-pending")}catch(e){}try{var m=localStorage.getItem("mbs-mode");if(m==="game"||m==="article")document.documentElement.setAttribute("data-mode",m)}catch(e){}})()</script>
 <style>
 html{--good:#8fe3b0;--bad:#ff9a8f}
 html[data-mode="article"]{--good:#1d6b3a;--bad:#b00e28}
@@ -194,6 +194,37 @@ html:not(.choosing) #choose{display:none}
 @media(prefers-reduced-motion:reduce){#choose{animation:none}}
 [data-mode] .controls--hero>.wrap{padding-left:0;padding-right:0}
 @media(min-width:1000px) and (min-height:620px){[data-mode="article"] .foot{margin-top:.6rem;padding-top:.6rem;font-size:.8125rem;line-height:1.45;border-top:1px solid var(--rule)}[data-mode="article"] .foot p{margin-bottom:.25rem}}
+
+/* Intro: plays when a page opens. Game = kick a field goal. Article = reader-mode sheet. */
+#intro{position:fixed;inset:0;z-index:190;display:none;overflow:hidden;will-change:transform}
+html.intro-pending #intro,html.intro-on #intro{display:block}
+#intro.out{transform:translateY(-102%);transition:transform .75s cubic-bezier(.7,0,.2,1)}
+.in{position:absolute;inset:0;display:none;outline:none}
+html[data-mode="game"] #intro .in--game,html[data-mode="article"] #intro .in--article{display:block}
+.in--game{background:#0c3326 repeating-linear-gradient(90deg,#0c3326 0 90px,#0f3a2c 90px 180px);color:#f4f1e8;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.in--game svg{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.g-title{position:absolute;left:clamp(1rem,3vw,2.5rem);top:1.1rem;margin:0;font:800 1.5rem/1 "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.03em}
+.g-msg{position:absolute;left:0;right:0;top:clamp(4.5rem,13vh,7rem);margin:0;text-align:center;font:800 clamp(1.6rem,4.5vw,3.25rem)/1 "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.02em;pointer-events:none}
+.g-msg small{display:block;margin-top:.5rem;font:400 1rem/1.3 "Barlow",sans-serif;text-transform:none;letter-spacing:0;color:#b4c7bc}
+.g-msg.good{color:#ffd23f;animation:pop .45s cubic-bezier(.2,1.6,.4,1) both}
+.g-msg.miss{color:#ff9a8f}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+#aim{fill:#ffd23f}
+.leg{transition:transform .16s cubic-bezier(.2,.8,.3,1);transform-origin:0 0}
+.in--article{background:#faf7f0;color:#1c1a16;font-family:Newsreader,Georgia,serif;cursor:pointer}
+.sheet{position:absolute;top:50%;left:50%;width:min(44rem,88vw);transform:translate(-50%,-50%);padding:0}
+.sheet .k{margin:0 0 1rem;font:600 .8125rem/1 "Barlow",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#c8102e;opacity:0;animation:fadeup .6s .1s both}
+.sheet h2{margin:0;font:600 clamp(2rem,5.5vw,3.5rem)/1.08 Newsreader,Georgia,serif;letter-spacing:-.015em;opacity:0;animation:fadeup .7s .25s both}
+.sheet hr{width:100%;height:2px;margin:1.5rem 0 1.25rem;border:0;background:#1c1a16;transform-origin:left;transform:scaleX(0);animation:draw .8s .7s cubic-bezier(.2,.7,.2,1) both}
+.sheet .ln{display:block;height:.7rem;margin:0 0 .8rem;border-radius:2px;background:#e3dccb;transform-origin:left;transform:scaleX(0);animation:draw .7s cubic-bezier(.2,.7,.2,1) both}
+.sheet .ln:nth-of-type(1){width:100%;animation-delay:.9s}.sheet .ln:nth-of-type(2){width:92%;animation-delay:1.02s}.sheet .ln:nth-of-type(3){width:97%;animation-delay:1.14s}.sheet .ln:nth-of-type(4){width:60%;animation-delay:1.26s}
+.sheet .open{margin:1.25rem 0 0;font:600 .9375rem "Barlow",sans-serif;color:#5b564d;opacity:0;animation:fadeup .5s 1.5s both}
+@keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes draw{to{transform:scaleX(1)}}
+.intro__skip{position:absolute;top:.9rem;right:clamp(1rem,3vw,2.5rem);z-index:3;min-height:44px;padding:.5rem 1rem;font:600 .9375rem "Barlow",sans-serif;color:inherit;background:rgba(127,127,127,.15);border:1px solid currentColor;border-radius:2px;cursor:pointer}
+html[data-mode="game"] .intro__skip{color:#f4f1e8}html[data-mode="article"] .intro__skip{color:#1c1a16}
+.intro__skip:hover{background:rgba(127,127,127,.3)}
+@media(prefers-reduced-motion:reduce){#intro{display:none!important}}
 @keyframes enter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .sec.enter,#top.enter{animation:enter .45s cubic-bezier(.2,.7,.2,1) both}
 .sec.enter .tile,.sec.enter .panel,.go.enter .go__c{animation:enter .55s cubic-bezier(.2,.7,.2,1) both}
@@ -217,6 +248,29 @@ html:not(.choosing) #choose{display:none}
   </div>
   <button class="pick pick--game" data-m="game"><small>Option 1 · Playful</small><b>Game<br>mode</b><span>Football vibe: night-game broadcast look, turf green, big numbers, everything on one screen.</span><i>Start in Game mode →</i></button>
   <button class="pick pick--article" data-m="article"><small>Option 2 · Professional</small><b>Article<br>mode</b><span>Clean, calm look with serif type. Built for reading and scouting reports.</span><i>Start in Article mode →</i></button>
+</div>
+<div id="intro" role="dialog" aria-modal="true" aria-label="Intro. Press Space to kick, or skip.">
+  <div class="in in--game" id="ig" tabindex="-1">
+    <p class="g-title">Pocket Myth</p>
+    <svg viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <g stroke="#f4f1e8" stroke-opacity=".28" stroke-width="3" fill="none"><path d="M0 505H1000M0 540H1000M120 470V560M420 470V560M720 470V560"/></g>
+      <g id="posts" stroke="#ffd23f" stroke-width="9" stroke-linecap="round" fill="none"><path d="M780 505V360M700 360H860M700 360V110M860 360V110"/></g>
+      <path id="aim" d="M-14 0L14 0L0 20Z" transform="translate(780 70)"/>
+      <path id="aimline" d="M780 92V120" stroke="#ffd23f" stroke-opacity=".5" stroke-width="3" stroke-dasharray="4 6"/>
+      <ellipse cx="190" cy="508" rx="70" ry="9" fill="#000" opacity=".3"/>
+      <g id="player" transform="translate(190 508)">
+        <g stroke="#f4f1e8" stroke-width="16" stroke-linecap="round" fill="none"><path d="M-8 -78L-18 -4"/></g>
+        <g id="leg" class="leg" transform="translate(6 -78)"><path d="M0 0L16 70" stroke="#f4f1e8" stroke-width="16" stroke-linecap="round"/><path d="M12 66l30 4" stroke="#ffd23f" stroke-width="12" stroke-linecap="round"/></g>
+        <path d="M-26 -78V-150Q0 -168 28 -150V-78Z" fill="#f4f1e8"/><path d="M-26 -118H28" stroke="#ffd23f" stroke-width="10"/>
+        <path d="M-24 -142L-52 -100M26 -142L52 -108" stroke="#f4f1e8" stroke-width="13" stroke-linecap="round"/>
+        <circle cx="0" cy="-178" r="22" fill="#ffd23f"/><path d="M-4 -180H22" stroke="#0c3326" stroke-width="5" stroke-linecap="round"/>
+      </g>
+      <g id="ball"><ellipse rx="22" ry="14" fill="#f4f1e8" stroke="#0c3326" stroke-width="2"/><path d="M-9 0H9M-4 -4V4M0 -4V4M4 -4V4" stroke="#0c3326" stroke-width="2"/></g>
+    </svg>
+    <p class="g-msg" id="gmsg" aria-live="polite"></p>
+  </div>
+  <div class="in in--article" id="ia" tabindex="-1"><div class="sheet"><p class="k">2021 NFL tracking data</p><h2>Is he good, and would he fit our QB?</h2><hr><span class="ln"></span><span class="ln"></span><span class="ln"></span><span class="ln"></span><p class="open">Opening the article…</p></div></div>
+  <button type="button" class="intro__skip" id="iskip">Skip intro →</button>
 </div>
 <a class="skip" href="#main">Skip to the content</a>
 <header class="masthead" style="display:block">
@@ -469,8 +523,31 @@ document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement.t
  ch.querySelectorAll(".pick").forEach(b=>b.onclick=()=>{const m=b.dataset.m;document.documentElement.dataset.mode=m;
   try{sessionStorage.setItem("mbs-chosen","1");localStorage.setItem("mbs-mode",m)}catch(e){}
   document.querySelectorAll('input[name="mode"]').forEach(r=>r.checked=r.value===m);
-  document.documentElement.classList.remove("choosing");render();renderVal();show("top");$("pl").blur()});
+  document.documentElement.classList.remove("choosing");render();renderVal();show("top");$("pl").blur();runIntro(m)});
  ch.addEventListener("keydown",e=>{if(e.key==="Tab"){const bs=[...ch.querySelectorAll(".pick")];const i=bs.indexOf(document.activeElement);e.preventDefault();bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}if(e.key==="ArrowLeft"||e.key==="ArrowRight")ch.querySelectorAll(".pick")[e.key==="ArrowLeft"?0:1].focus()})})();
+
+/* Intro runner */
+let introTimer=null,introRaf=0;
+function endIntro(){const it=$("intro"),d=document.documentElement;if(!d.classList.contains("intro-on")&&!d.classList.contains("intro-pending"))return;cancelAnimationFrame(introRaf);clearTimeout(introTimer);
+  d.classList.remove("intro-pending");d.classList.add("intro-on");it.classList.add("out");setTimeout(()=>{d.classList.remove("intro-on");it.classList.remove("out");window.removeEventListener("keydown",introKey);try{$("pl").blur()}catch(e){}},780)}
+function introKey(e){if(e.key==="Escape"){e.preventDefault();endIntro()}else if(document.documentElement.dataset.mode==="game"&&(e.key===" "||e.key==="Enter")&&document.activeElement.id!=="iskip"){e.preventDefault();kick()}else if(document.documentElement.dataset.mode==="article"&&(e.key==="Enter"||e.key===" ")&&document.activeElement.id!=="iskip"){e.preventDefault();endIntro()}}
+let gState="aim",gX=780,gMiss=0;const BX0=300,BY0=492;
+function aimLoop(t){if(gState==="aim"){gX=780+175*Math.sin(t/330);$("aim").setAttribute("transform","translate("+gX.toFixed(1)+" 70)");$("aimline").setAttribute("d","M"+gX.toFixed(1)+" 92V120")}introRaf=requestAnimationFrame(aimLoop)}
+function setBall(x,y,sc,rot){$("ball").setAttribute("transform","translate("+x.toFixed(1)+" "+y.toFixed(1)+") rotate("+rot.toFixed(0)+") scale("+sc.toFixed(3)+")")}
+function msg(t,cls,sub){const m=$("gmsg");m.className="g-msg "+(cls||"");m.innerHTML=t+(sub?"<small>"+sub+"</small>":"")}
+function kick(){if(gState!=="aim")return;gState="fly";const tx=gX,ty=215;msg("");$("leg").style.transform="rotate(60deg)";
+  setTimeout(()=>{$("leg").style.transform="rotate(-62deg)";const t0=performance.now(),D=1250;
+    (function step(now){const k=Math.min(1,(now-t0)/D),e=k,x=(1-e)*(1-e)*BX0+2*(1-e)*e*((BX0+tx)/2)+e*e*tx,y=(1-e)*(1-e)*BY0+2*(1-e)*e*20+e*e*ty;setBall(x,y,1-.55*k,k*900);
+      if(k<1)requestAnimationFrame(step);else land(tx)})(t0)},170)}
+function land(tx){const good=tx>704&&tx<856;
+  if(good){gState="done";msg("It's good!","good","Opening the page…");introTimer=setTimeout(endIntro,1100)}
+  else{gMiss++;if(gMiss>=3){gState="done";msg("Wide again","miss","Opening the page…");introTimer=setTimeout(endIntro,1000)}else{msg("Wide!","miss","Aim between the yellow posts and try again");setTimeout(()=>{$("leg").style.transform="";setBall(BX0,BY0,1,0);gState="aim";msg("Tap, click or press Space to kick","","Time it so the arrow sits between the posts")},1100)}}}
+function runIntro(mode){const d=document.documentElement,it=$("intro");if(matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.remove("intro-pending");return}
+  d.classList.remove("intro-pending");d.classList.add("intro-on");it.classList.remove("out");window.addEventListener("keydown",introKey);
+  $("iskip").onclick=ev=>{ev.stopPropagation();endIntro()};
+  if(mode==="article"){const sh=$("ia");sh.onclick=endIntro;introTimer=setTimeout(endIntro,2600);setTimeout(()=>$(mode==="article"?"ia":"ig").focus({preventScroll:true}),50)}
+  else{gState="aim";gMiss=0;$("leg").style.transform="";setBall(BX0,BY0,1,0);msg("Tap, click or press Space to kick","","Time it so the arrow sits between the posts");$("ig").onclick=kick;cancelAnimationFrame(introRaf);introRaf=requestAnimationFrame(aimLoop);setTimeout(()=>$(mode==="article"?"ia":"ig").focus({preventScroll:true}),50)}}
+if(!document.documentElement.classList.contains("choosing"))runIntro(document.documentElement.dataset.mode);
 </script>
 </body>
 </html>
