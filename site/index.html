@@ -25,9 +25,41 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 Barlow,sy
 .ctl label{font:600 13px Barlow;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
 select{font:600 16px Barlow;padding:8px 32px 8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-width:0;max-width:100%}
 select:focus-visible,button:focus-visible,.dot:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.combo{position:relative}
+.combo input{font:600 16px Barlow;padding:8px 30px 8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:260px;max-width:100%}
+.combo.t input{width:170px}
+.combo::after{content:"";position:absolute;right:12px;top:50%;width:7px;height:7px;border:solid var(--mut);border-width:0 2px 2px 0;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.combo ul{display:none;position:absolute;left:0;top:calc(100% + 4px);min-width:100%;width:max-content;max-width:90vw;max-height:320px;overflow:auto;margin:0;padding:4px;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:30}
+.combo.open ul{display:block}
+.combo li{padding:7px 10px;border-radius:6px;cursor:pointer;font-size:15px;display:flex;justify-content:space-between;gap:16px}
+.combo li small{color:var(--mut)}
+.combo li.act{background:var(--acc);color:var(--accfg)}.combo li.act small{color:inherit;opacity:.8}
+.combo .none{padding:10px;color:var(--mut);font-size:14px}
+#live{font-size:15px;color:var(--mut);flex:1 1 100%}
+#live b{color:var(--ink)}
+#q2{scroll-margin-top:90px}
+.help{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0 0 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;font-size:15px}
+@media(max-width:700px){.help{grid-template-columns:1fr}}
+.help b{color:var(--ink)}.help span{color:var(--mut)}
 .bar nav{margin-left:auto;display:flex;gap:14px;font-size:14px}
 .bar nav a{color:var(--mut);text-decoration:none;font-weight:600}.bar nav a:hover{color:var(--ink)}
-@media(max-width:700px){.bar nav{display:none}.ctl{flex:1 1 100%}.ctl select{flex:1}}
+@media(max-width:700px){.combo{position:relative}
+.combo input{font:600 16px Barlow;padding:8px 30px 8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:260px;max-width:100%}
+.combo.t input{width:170px}
+.combo::after{content:"";position:absolute;right:12px;top:50%;width:7px;height:7px;border:solid var(--mut);border-width:0 2px 2px 0;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.combo ul{display:none;position:absolute;left:0;top:calc(100% + 4px);min-width:100%;width:max-content;max-width:90vw;max-height:320px;overflow:auto;margin:0;padding:4px;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:30}
+.combo.open ul{display:block}
+.combo li{padding:7px 10px;border-radius:6px;cursor:pointer;font-size:15px;display:flex;justify-content:space-between;gap:16px}
+.combo li small{color:var(--mut)}
+.combo li.act{background:var(--acc);color:var(--accfg)}.combo li.act small{color:inherit;opacity:.8}
+.combo .none{padding:10px;color:var(--mut);font-size:14px}
+#live{font-size:15px;color:var(--mut);flex:1 1 100%}
+#live b{color:var(--ink)}
+#q2{scroll-margin-top:90px}
+.help{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0 0 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;font-size:15px}
+@media(max-width:700px){.help{grid-template-columns:1fr}}
+.help b{color:var(--ink)}.help span{color:var(--mut)}
+.bar nav{display:none}.ctl{flex:1 1 100%}.ctl select{flex:1}}
 section{padding:56px 0 0}
 .eyebrow{display:inline-flex;gap:8px;align-items:center;font:600 13px Barlow;text-transform:uppercase;letter-spacing:.08em;color:var(--mut)}
 .eyebrow b{background:var(--acc);color:var(--accfg);border-radius:99px;padding:1px 10px}
@@ -73,27 +105,29 @@ a{color:inherit}
 <body>
 <div class="hero"><div class="w">
   <h1>Is he good, and would he <span>fit our QB?</span></h1>
-  <p>Pick any of 47 NFL receivers. See how he gets open against man and zone coverage, then how often he would be open before another team's quarterback throws.</p>
+  <p>Pick an NFL receiver. We show how well he gets away from defenders, and how often he would be open in time if he joined a different team.</p>
 </div></div>
 
 <div class="bar"><div class="w">
-  <div class="ctl"><label for="pl">Receiver</label><select id="pl"></select></div>
-  <div class="ctl"><label for="tm">Joins</label><select id="tm"></select></div>
-  <nav><a href="#q1">1 · Profile</a><a href="#q2">2 · QB fit</a><a href="#proof">Check</a></nav>
+  <div class="ctl"><label for="pl">Receiver</label><div class="combo" id="plc"><input id="pl" role="combobox" aria-expanded="false" aria-controls="pll" autocomplete="off" placeholder="Search a player"><ul id="pll" role="listbox"></ul></div></div>
+  <div class="ctl"><label for="tm">If he joins</label><div class="combo t" id="tmc"><input id="tm" role="combobox" aria-expanded="false" aria-controls="tml" autocomplete="off" placeholder="Search a team"><ul id="tml" role="listbox"></ul></div></div>
+  <nav><a href="#q1">1 · Is he good?</a><a href="#q2">2 · New team</a><a href="#proof">Proof</a></nav>
+  <div id="live" aria-live="polite"></div>
 </div></div>
 
 <div class="w">
 <section id="q1" style="padding-top:44px">
-  <div class="eyebrow"><b>Part 1</b> How good is he?</div>
-  <h2>Gets open, and against what</h2>
-  <p class="lead">Scores are yards of separation versus a typical player in the same alignment. Above zero is better than typical.</p>
+  <div class="eyebrow"><b>Part 1</b> Is he good?</div>
+  <h2 id="h1"></h2>
+  <p class="lead">A receiver is "open" when he has space from the nearest defender. The scores below are the <b>extra yards of space</b> he gets compared with a typical player lined up in the same spot. Above 0 is better than typical.</p>
+  <div class="help"><div><b>Man coverage</b> <span>One defender follows him around the field.</span></div><div><b>Zone coverage</b> <span>Defenders guard areas, and he has to find a gap.</span></div></div>
   <div class="tiles" id="tiles1"></div>
   <div class="grid">
-    <div class="card"><h3>Man vs zone</h3><p class="cap">Separation at the throw, in yards, vs typical</p><svg id="bars" viewBox="0 0 440 150" role="img" aria-label="Man and zone score"></svg></div>
-    <div class="card"><h3>When he gets open</h3><p class="cap">Share of routes open by each second after the snap</p><svg id="curve1" viewBox="0 0 440 210" role="img" aria-label="Open-time curve"></svg></div>
+    <div class="card"><h3>Extra space vs a typical player</h3><p class="cap">Yards from the nearest defender when the ball is thrown</p><svg id="bars" viewBox="0 0 440 150" role="img" aria-label="Man and zone score"></svg></div>
+    <div class="card"><h3>How quickly he gets open</h3><p class="cap">Of 100 routes, how many are open by each second after the snap</p><svg id="curve1" viewBox="0 0 440 210" role="img" aria-label="Open-time curve"></svg></div>
   </div>
   <div class="card" style="margin-top:14px">
-    <h3>Where he sits among all 47</h3><p class="cap">Click a dot to switch receiver. Right = better vs man, up = better vs zone.</p>
+    <h3>Everyone side by side</h3><p class="cap">Click any dot to see that player. Further right = better against man. Higher = better against zone.</p>
     <svg id="scatter" viewBox="0 0 880 440" role="img" aria-label="Man score against zone score"></svg>
     <div class="legend"><span><i style="border-radius:50%"></i>WR</span><span><i></i>TE</span><span><i style="transform:rotate(45deg)"></i>RB</span><span>Filled = selected</span></div>
   </div>
@@ -102,28 +136,28 @@ a{color:inherit}
 <section id="q2">
   <div class="eyebrow"><b>Part 2</b> Would he fit?</div>
   <h2>If he joined another team</h2>
-  <p class="lead">His open-time curve is held against that team's dropback clock, the time its QB takes from snap to throw. Result: share of dropbacks where he is already open.</p>
+  <p class="lead">Quarterbacks throw at different speeds. A fast thrower needs receivers who get open early. We check how often he would already be open by the time that team's QB lets go. Change the team in the top bar.</p>
   <p class="big" id="verdict2"></p>
   <div class="tiles" id="tiles2"></div>
   <div class="grid">
-    <div class="card"><h3>His curve vs the team's clock</h3><p class="cap">Vertical line = median time the QB holds the ball</p><svg id="curve2" viewBox="0 0 440 240" role="img" aria-label="Open-time curve with team clock"></svg></div>
-    <div class="card"><h3>Fit by team</h3><p class="cap">Bars start at his worst team. Click to compare. Red = his own team.</p><div class="teams" id="teams"></div></div>
+    <div class="card"><h3>Is he open by the time the QB throws?</h3><p class="cap">The vertical line is how long this team's QB usually waits before throwing</p><svg id="curve2" viewBox="0 0 440 240" role="img" aria-label="Open-time curve with team clock"></svg></div>
+    <div class="card"><h3>Every team, best to worst</h3><p class="cap">Click a team to compare. Red bar = his current team.</p><div class="teams" id="teams"></div></div>
   </div>
-  <div class="note"><b>Read it as "open in time", not "more targets".</b> In our data, being open by the QB's clock barely predicted target rate (r = 0.09).</div>
+  <div class="note"><b>This means "open in time", not "more passes thrown to him".</b> In our data, being open early did not reliably lead to more targets.</div>
 </section>
 
 <section id="proof">
-  <div class="eyebrow"><b>Check</b> Does it hold up?</div>
-  <h2>When a team changed QB</h2>
-  <p class="lead">Seven teams changed quarterback in Weeks 1 to 8. For 28 receivers we learned the curve with QB A only, predicted the change with QB B from his dropback times alone, and compared with what happened.</p>
-  <div class="tiles"><div class="tile"><div class="k">All 28</div><div class="v">r = 0.52</div><div class="s">p = 0.004</div></div><div class="tile"><div class="k">50+ routes, 11 players</div><div class="v">r = 0.93</div><div class="s">tighter with more data</div></div><div class="tile"><div class="k">Direction right</div><div class="v">71%</div><div class="s">of receivers</div></div><div class="tile"><div class="k">Size understated</div><div class="v">~3×</div><div class="s">real changes are bigger</div></div></div>
+  <div class="eyebrow"><b>Proof</b> Does it work?</div>
+  <h2>We tested it on real QB changes</h2>
+  <p class="lead">Seven teams switched quarterbacks mid-season. For 28 receivers we predicted how his "open in time" rate would change under the new QB, then compared with what really happened.</p>
+  <div class="tiles"><div class="tile"><div class="k">Direction right</div><div class="v">71%</div><div class="s">went up or down as predicted</div></div><div class="tile"><div class="k">Match (0 to 1)</div><div class="v">0.52</div><div class="s">all 28 players. Not luck (p = 0.004)</div></div><div class="tile"><div class="k">Players with lots of data</div><div class="v">0.93</div><div class="s">11 players, 50+ routes each</div></div><div class="tile"><div class="k">Real change vs predicted</div><div class="v">~3× bigger</div><div class="s">trust the direction, not the size</div></div></div>
   <div class="card"><svg id="val" viewBox="0 0 880 400" role="img" aria-label="Predicted against actual change"></svg>
-  <div class="legend"><span><i style="border-radius:50%;background:var(--acc)"></i>50+ routes under both QBs</span><span><i style="border-radius:50%"></i>fewer routes</span><span>Change in % of routes open before the throw, in points. Hover a dot for the name.</span></div></div>
-  <div class="note"><b>Why not the offensive line?</b> On real plays, late openers on weak-line teams got open, got targeted and caught the ball no worse than on strong-line teams. The QB's timing is the mismatch that shows up.</div>
+  <div class="legend"><span><i style="border-radius:50%;background:var(--acc)"></i>50+ routes under both QBs</span><span><i style="border-radius:50%"></i>fewer routes</span><span>Each dot is one receiver. Up and right = the model was right. Hover for the name.</span></div></div>
+  <div class="note"><b>What about the offensive line?</b> We tested whether slow-to-get-open receivers struggle behind a weak line. They did not. How fast the QB throws is what matters.</div>
 </section>
 
 <footer>
-  <b style="color:var(--ink)">Limits.</b> 8 weeks of 2021 data, about 40 to 70 man routes per player, so single scores have wide error. Part 2 is a grounded estimate validated on 7 teams and 28 receivers, not a proven prediction. "Open" means 3+ yards past the line and 3+ yards from every defender, at least 0.5 s after the snap.
+  <b style="color:var(--ink)">Limits.</b> Only 8 weeks of 2021 games, so one player has just 40 to 70 routes against man coverage and his score can be off. Part 2 is an informed estimate, tested on 7 teams, not a guarantee. "Open" means at least 3 yards past the line and 3 yards from every defender.
   <br><br>Method: <a href="https://github.com/Vritika0703/man-beater-score/blob/main/METHODS.md">METHODS.md</a>
 </footer>
 </div>
@@ -139,13 +173,28 @@ const pc=x=>Math.round(x*100)+"%";
 const sg=x=>(x>=0?"+":"")+x.toFixed(2);
 function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e}
 function add(svg,...c){c.forEach(x=>svg.appendChild(x))}
-function level(s){return s>0.15?"strong":s>-0.15?"average":"below average"}
+function level(s){return s>0.15?"better than most":s>-0.15?"about typical":"below typical"}
 
-/* selects */
-$("pl").innerHTML=P.map(p=>`<option value="${p.id}">${p.n} (${p.pos}, ${p.team})</option>`).join("");
-$("tm").innerHTML=teams.map(t=>`<option>${t}</option>`).join("");
-$("pl").onchange=e=>{cur=byId[e.target.value];render()};
-$("tm").onchange=e=>{team=e.target.value;render()};
+const TN={ARI:"Arizona",ATL:"Atlanta",BAL:"Baltimore",BUF:"Buffalo",CAR:"Carolina",CHI:"Chicago",CIN:"Cincinnati",CLE:"Cleveland",DAL:"Dallas",DEN:"Denver",DET:"Detroit",GB:"Green Bay",HOU:"Houston",IND:"Indianapolis",JAX:"Jacksonville",KC:"Kansas City",LA:"Los Angeles Rams",LAC:"LA Chargers",LV:"Las Vegas",MIA:"Miami",MIN:"Minnesota",NE:"New England",NO:"New Orleans",NYG:"NY Giants",NYJ:"NY Jets",PHI:"Philadelphia",PIT:"Pittsburgh",SEA:"Seattle",SF:"San Francisco",TB:"Tampa Bay",TEN:"Tennessee",WAS:"Washington"};
+const TYPE={"Beats both":"Gets open vs both","Man specialist":"Best vs man coverage","Zone specialist":"Best vs zone coverage","Below average vs both":"Rarely gets open clean"};
+function combo(id,items,cur,onPick){
+  const root=$(id+"c"),inp=$(id),ul=root.querySelector("ul");let list=items,act=0;
+  const label=v=>items.find(i=>i.v==v).label;
+  function draw(){ul.innerHTML=list.length?list.map((i,k)=>`<li role="option" data-v="${i.v}" class="${k===act?"act":""}">${i.label}<small>${i.sub||""}</small></li>`).join(""):'<div class="none">No match</div>';const a=ul.querySelector(".act");if(a)a.scrollIntoView({block:"nearest"})}
+  function open(){root.classList.add("open");inp.setAttribute("aria-expanded","true");draw()}
+  function close(){root.classList.remove("open");inp.setAttribute("aria-expanded","false");inp.value=label(cur())}
+  function choose(v){close();onPick(v);inp.value=label(cur());inp.blur()}
+  function filter(){const q=inp.value.toLowerCase().trim();list=items.filter(i=>(i.label+" "+(i.sub||"")+" "+(i.k||"")).toLowerCase().includes(q));act=0;open()}
+  inp.onfocus=()=>{inp.select();list=items;act=Math.max(0,items.findIndex(i=>i.v==cur()));open()};
+  inp.oninput=filter;
+  inp.onkeydown=e=>{if(e.key==="ArrowDown"){act=Math.min(list.length-1,act+1);draw();e.preventDefault()}else if(e.key==="ArrowUp"){act=Math.max(0,act-1);draw();e.preventDefault()}else if(e.key==="Enter"){if(list[act])choose(list[act].v);e.preventDefault()}else if(e.key==="Escape"){close();inp.blur()}};
+  ul.onmousedown=e=>{const li=e.target.closest("li");if(li){e.preventDefault();choose(li.dataset.v)}};
+  inp.onblur=()=>setTimeout(close,0);
+  inp.value=label(cur());
+  return {sync:()=>{inp.value=label(cur())}}
+}
+const cp=combo("pl",P.map(p=>({v:p.id,label:p.n,sub:p.pos+" · "+p.team})),()=>cur.id,v=>{cur=byId[v];render()});
+const ct=combo("tm",teams.map(t=>({v:t,label:t,sub:TN[t],k:TN[t]})),()=>team,v=>{team=v;render();$("q2").scrollIntoView({behavior:"smooth"})});
 
 function at(c,t){const g=D.grid;if(t<=0)return c[0];const i=Math.min(Math.floor(t/0.1),g.length-1);const f=t/0.1-i;return i>=g.length-1?c[g.length-1]:c[i]*(1-f)+c[i+1]*f}
 
@@ -162,18 +211,19 @@ function chart(svg,W,H,m,highlight){
 function tile(k,v,s,cls=""){return `<div class="tile"><div class="k">${k}</div><div class="v ${cls}">${v}</div><div class="s">${s||""}</div></div>`}
 function renderP1(){
   const p=cur;
-  $("tiles1").innerHTML=tile("Type",p.type,p.pos+" · "+p.team,"sm")+tile("Vs man",sg(p.ms),level(p.ms)+" · "+p.mr+" routes",p.ms>=0?"pos":"neg")+tile("Vs zone",sg(p.zs),level(p.zs)+" · "+p.zr+" routes",p.zs>=0?"pos":"neg")+tile("Half open by",p.med==null?"4s+":p.med.toFixed(1)+"s","after the snap");
+  $("h1").textContent=p.n+" at a glance";
+  $("tiles1").innerHTML=tile("Style",TYPE[p.type]||p.type,p.pos+" · "+p.team,"sm")+tile("Vs man coverage",sg(p.ms),level(p.ms)+" · "+p.mr+" routes",p.ms>=0?"pos":"neg")+tile("Vs zone coverage",sg(p.zs),level(p.zs)+" · "+p.zr+" routes",p.zs>=0?"pos":"neg")+tile("Half his routes open by",p.med==null?"4s+":p.med.toFixed(1)+"s","after the snap");
   const s=$("bars");s.innerHTML="";
-  const sc=v=>220+v*(190/0.8), rows=[["Man",p.ms,p.mr,css("--man")],["Zone",p.zs,p.zr,css("--zone")]];
+  const sc=v=>220+v*(190/0.8), rows=[["Vs man",p.ms,p.mr,css("--man")],["Vs zone",p.zs,p.zr,css("--zone")]];
   add(s,el("line",{x1:220,x2:220,y1:6,y2:130,stroke:css("--ink"),"stroke-width":1.5}));
   rows.forEach(([n,v,r,c],i)=>{const yy=14+i*58,v2=Math.max(-.8,Math.min(.8,v));
     add(s,el("text",{x:0,y:yy+22,style:"font-weight:600;font-size:15px;fill:"+css("--ink")},n),
       el("rect",{x:Math.min(220,sc(v2)),y:yy,width:Math.abs(sc(v2)-220),height:34,fill:c,rx:4}),
       el("text",{x:v>=0?sc(v2)+6:sc(v2)-6,y:yy+22,"text-anchor":v>=0?"start":"end",style:"font-weight:600;fill:"+css("--ink")},sg(v)),
       el("text",{x:0,y:yy+50,style:"font-size:12px"},r+" routes"))});
-  add(s,el("text",{x:220,y:146,"text-anchor":"middle"},"typical"));
+  add(s,el("text",{x:220,y:146,"text-anchor":"middle"},"typical player"));
   const {x,y}=chart($("curve1"),440,200,{l:40,r:10,t:10,b:24});
-  if(p.med!=null){const c=$("curve1");add(c,el("line",{x1:x(p.med),x2:x(p.med),y1:y(0),y2:y(.5),stroke:css("--ink"),"stroke-dasharray":"3 3"}),el("text",{x:x(p.med)-6,y:y(.5)-8,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},"50% open at "+p.med.toFixed(1)+"s"))}
+  if(p.med!=null){const c=$("curve1");add(c,el("line",{x1:x(p.med),x2:x(p.med),y1:y(0),y2:y(.5),stroke:css("--ink"),"stroke-dasharray":"3 3"}),el("text",{x:x(p.med)-6,y:y(.5)-8,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},"Half open by "+p.med.toFixed(1)+"s"))}
 }
 
 function renderScatter(){
@@ -181,7 +231,7 @@ function renderScatter(){
   const R=[-.8,.45],Z=[-.9,.5];
   const X=v=>m.l+(v-R[0])/(R[1]-R[0])*(W-m.l-m.r),Y=v=>H-m.b-(v-Z[0])/(Z[1]-Z[0])*(H-m.t-m.b);
   add(s,el("line",{x1:X(0),x2:X(0),y1:m.t,y2:H-m.b,class:"axis","stroke-width":1.5}),el("line",{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:"axis","stroke-width":1.5}),
-    el("text",{x:W-m.r,y:H-10,"text-anchor":"end"},"Man score →"),el("text",{x:m.l+4,y:m.t+12},"↑ Zone score"),el("text",{x:W-m.r-4,y:m.t+14,"text-anchor":"end",style:"font-size:15px;font-weight:600;opacity:.7"},"Beats both"),el("text",{x:m.l+6,y:H-m.b-8,style:"font-size:15px;font-weight:600;opacity:.7"},"Below average vs both"));
+    el("text",{x:W-m.r,y:H-10,"text-anchor":"end"},"Better vs man →"),el("text",{x:m.l+4,y:m.t+12},"↑ Better vs zone"),el("text",{x:W-m.r-4,y:m.t+14,"text-anchor":"end",style:"font-size:15px;font-weight:600;opacity:.7"},"Good vs both"),el("text",{x:m.l+6,y:H-m.b-8,style:"font-size:15px;font-weight:600;opacity:.7"},"Weak vs both"));
   P.forEach(p=>{const cx=X(Math.max(R[0]+.02,Math.min(R[1]-.02,p.ms))),cy=Y(Math.max(Z[0]+.02,Math.min(Z[1]-.02,p.zs))),sel=p===cur;
     const col=p.pos==="WR"?css("--man"):p.pos==="TE"?css("--zone"):css("--mut");
     const a={fill:sel?col:"none",stroke:col,"stroke-width":sel?3:1.6,class:"dot",tabindex:0,role:"button","aria-label":p.n};
@@ -190,21 +240,22 @@ function renderScatter(){
     const t=el("title",{},`${p.n}: man ${sg(p.ms)}, zone ${sg(p.zs)}`);sh.appendChild(t);add(s,sh);
     if(sel)add(s,el("text",{x:cx+12,y:cy+4,style:"font-weight:600;font-size:15px;fill:"+css("--ink")},p.n))});
 }
-function pick(p){cur=p;$("pl").value=p.id;render()}
+function pick(p){cur=p;render()}
 
 function renderP2(){
   const p=cur,fit=p.fit,own=p.team,f=fit[team],fo=fit[own],clk=D.clock[team];
   const vals=Object.values(fit),mn=Math.min(...vals),mx=Math.max(...vals);
   const diff=(f-fo)*100;
   const rank=Object.values(fit).filter(v=>v>f).length+1;
-  $("verdict2").innerHTML=team===own?`${p.n} stays at ${own}. Pick another team in the bar above to compare.`:`${p.n} would be open on ${pc(f)} of ${team} dropbacks, ${Math.abs(diff).toFixed(1)} points ${diff>=0?"more":"fewer"} than at ${own}.`;
-  $("tiles2").innerHTML=tile("At "+team,pc(f),"open before the throw")+tile("At "+own+" (now)",pc(fo),"his own team")+tile("Change",(diff>=0?"+":"")+diff.toFixed(1),"points",diff>=0?"pos":"neg")+tile("Rank",rank+" / 32","best fit is #1");
+  $("verdict2").innerHTML=team===own?`${p.n} already plays for ${own}. Pick a different team in the top bar to compare.`:`With ${TN[team]}, ${p.n} would be open in time on ${pc(f)} of plays: ${Math.abs(diff).toFixed(1)} points ${diff>=0?"more":"fewer"} than with ${TN[own]}.`;
+  $("tiles2").innerHTML=tile("With "+team,pc(f),"of plays open before the throw")+tile("Now at "+own,pc(fo),"of plays open before the throw")+tile("Difference",(diff>=0?"+":"")+diff.toFixed(1),"percentage points",diff>=0?"pos":"neg")+tile("Team rank for him",rank+" of 32","1 = best match");
+  $("live").innerHTML=team===own?`<b>${p.n}</b> at ${own}: open in time on <b>${pc(f)}</b> of plays.`:`<b>${p.n}</b> with <b>${team}</b>: open in time on <b>${pc(f)}</b> of plays (<b class="${diff>=0?"pos":"neg"}">${diff>=0?"+":""}${diff.toFixed(1)}</b> vs ${own}).`;
   const {x,y}=chart($("curve2"),440,240,{l:40,r:10,t:14,b:24});
   const c=$("curve2"),v=at(p.cur,clk);
   add(c,el("line",{x1:x(clk),x2:x(clk),y1:y(0),y2:y(1),stroke:css("--acc"),"stroke-width":2}),
-    el("text",{x:x(clk)-6,y:y(1)+14,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},team+" clock "+clk.toFixed(1)+"s"),
+    el("text",{x:x(clk)-6,y:y(1)+14,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},team+" QB throws at ~"+clk.toFixed(1)+"s"),
     el("circle",{cx:x(clk),cy:y(v),r:5,fill:css("--acc")}),
-    el("text",{x:x(clk)+8,y:y(v)+18,"text-anchor":"start",style:"font-weight:600;fill:"+css("--ink")},pc(v)+" open"));
+    el("text",{x:x(clk)-8,y:y(v)+20,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},pc(v)+" open by then"));
   const rows=Object.entries(fit).sort((a,b)=>b[1]-a[1]);
   $("teams").innerHTML=rows.map(([t,v])=>`<button class="team ${t===team?"sel":""} ${t===own?"own":""}" aria-label="${t}" data-t="${t}"><span class="n">${t}</span><span class="t"><span class="b" style="width:${8+(v-mn)/(mx-mn||1)*92}%"></span></span><span class="v">${pc(v)}</span></button>`).join("");
   document.querySelectorAll(".team").forEach(b=>b.onclick=()=>{team=b.dataset.t;$("tm").value=team;render()});
@@ -216,15 +267,14 @@ function renderVal(){
   const px=Math.min(ext,8);
   const X=v=>m.l+(Math.max(-px,Math.min(px,v))+px)/(2*px)*(W-m.l-m.r),Y=v=>H-m.b-(Math.max(-40,Math.min(40,v))+40)/80*(H-m.t-m.b);
   add(s,el("line",{x1:X(0),x2:X(0),y1:m.t,y2:H-m.b,class:"axis"}),el("line",{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:"axis"}),
-    el("text",{x:W-m.r,y:H-8,"text-anchor":"end"},"Predicted change →"),el("text",{x:m.l+4,y:m.t+10},"↑ Actual change"));
+    el("text",{x:W-m.r,y:H-8,"text-anchor":"end"},"What we predicted →"),el("text",{x:m.l+4,y:m.t+10},"↑ What happened"));
   all.forEach(r=>{const big=Math.min(r.routes_A,r.routes_B)>=50;
     const c=el("circle",{cx:X(r.pred_change),cy:Y(r.actual_change),r:big?9:6,fill:big?css("--acc"):"none",stroke:big?css("--acc"):css("--mut"),"stroke-width":1.8});
     c.appendChild(el("title",{},`${r.player} (${r.team}): ${r.qb_A} → ${r.qb_B}. Predicted ${r.pred_change}, actual ${r.actual_change}`));add(s,c)});
   add(s,el("text",{x:m.l+4,y:H-m.b-8},""));
 }
 
-function render(){renderP1();renderScatter();renderP2()}
-$("pl").value=cur.id;$("tm").value=team;
+function render(){cp.sync();ct.sync();renderP1();renderScatter();renderP2()}
 render();renderVal();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{render();renderVal()});
 </script>
