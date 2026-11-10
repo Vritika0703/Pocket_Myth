@@ -1,47 +1,75 @@
-# Man-Beater Score: who gets open against man coverage, and do QBs notice?
+# Who gets open against man coverage, and does a late-opening receiver need a strong line?
 
-We built the **Man-Beater Score**, a new metric for WRs, TEs and RBs: a player's separation from the nearest defender at the moment of the throw, against man coverage, minus what a typical player at his position gets in that coverage with the same time to throw (2021 Weeks 1–8 tracking, 30,288 routes, 74 players with ≥40 routes vs man). Separation clearly pays off, since WR/TE completion rate climbs from 25% under 1 yard of separation to 74% at 3–4 yards, yet QBs don't consistently feed the players who create it: Kalif Raymond, Cole Beasley, Adam Humphries and Ezekiel Elliott beat man coverage but are targeted only 12–14% of the time, while Travis Kelce, Kyle Pitts and Ja'Marr Chase get the least separation and are still targeted 30–38% of the time. Coaches can use the "Open but Ignored" list to call plays against man, and scouts can use the score to find route runners whose production undersells them. Method: positions come from the tracking frame of the first `pass_forward` event, defenders are players with PFF role `Coverage`, the targeted receiver is parsed from `playDescription` (the 7% of throws we couldn't match were dropped), and expected separation is a linear fit on time-to-throw within each position × coverage group. Limitations: tracking ends ~0.5 s after the throw so we can't measure separation at the catch, samples are small (40–70 man routes per player, wide confidence intervals, split-half reliability r = 0.27) so treat the score as a scouting flag rather than a verdict, and target rate isn't adjusted for position or for the other options on the play.
+We used 2021 NFL tracking data (Weeks 1–8) to answer two questions about WRs, TEs and RBs: who creates separation against man coverage, and does a receiver who gets open late need a strong offensive line? Separation pays off even among throws of the same depth: completion on short passes rises from 23% under 1 yard of separation to 84% at 6+ yards. Our **Man-Beater Score** ranks Laviska Shenault, Amari Cooper, Michael Pittman and Hunter Henry highest, and shows QBs under-target some open receivers (Kalif Raymond, Cole Beasley). A timing model predicts that late openers (mostly tight ends) are wasted behind weak lines, but on actual plays they were not hurt more than early openers, so a GM shouldn't discount a late-opening TE because of a weak line. Limitations: 8 weeks is a small sample (every player's interval crosses zero), tracking stops 0.5 s after the throw, and "open" and "pocket collapse" rely on distance thresholds, though the conclusions hold across five settings.
 
-## Results
+---
 
-**1. Separation pays off, especially against man**
+## Q1. Does getting open matter?
+
+For each route we measured the distance to the nearest coverage defender at the moment of the throw.
+
 ![Separation payoff](output/separation_payoff.png)
 
-**2. Man-Beater leaderboard (±95% CI)**
+- Open WRs and TEs are targeted more often, especially against man coverage.
+- Completion rises with separation **within the same throw depth**, so this isn't just "short passes are easier". Short throws go from 23% to 84%, deep throws from 23% to 69%.
+
+## Q2. Who gets open against man coverage? (Man-Beater Score)
+
+**Man-Beater Score** = a player's average separation against man coverage, minus what a typical player **in the same alignment** (outside WR, slot, inline TE or backfield) gets with the same time to throw. It is then shrunk toward zero according to how noisy each player's sample is (empirical Bayes), so a player with a lucky small sample can't top the list.
+
 ![Leaderboard](output/man_beater_leaderboard.png)
 
-**3. Open vs Fed: who beats man coverage but doesn't get the ball**
+- **Top:** Laviska Shenault (+0.18 yd), Amari Cooper, Michael Pittman, Hunter Henry, Kalif Raymond.
+- **Bottom:** Dan Arnold, Ja'Marr Chase, Quez Watkins, Mike Williams, Tyler Boyd.
+- **Use it as a scouting flag, not a verdict.** 78 players have at least 40 man routes, the split-half reliability is r = 0.34, and every 95% interval crosses zero.
+
+## Q3. Do QBs throw to the players who beat man coverage?
+
 ![Open vs Fed](output/open_vs_fed.png)
 
-All scores: [`output/man_beater_scores.csv`](output/man_beater_scores.csv) · per-route data: [`output/route_separation.csv`](output/route_separation.csv)
+Both axes compare a player with others in the **same alignment**, so TEs and RBs aren't penalized for naturally getting fewer targets.
 
-## Bonus: Receiver-Line Fit: is a late-opening receiver wasted behind a weak line?
+- **Open but Ignored:** Kalif Raymond, Cole Beasley and Laviska Shenault get open but are targeted less than expected. A coach could call more plays for them against man.
+- **Covered but Fed:** Travis Kelce, T.J. Hockenson, Tee Higgins and Kyle Pitts are targeted more than expected despite tight coverage. QBs trust them in tight windows.
+- Overall, the link between getting open against man and being targeted is weak (r = 0.11).
 
-**Question:** some receivers get open early (quick routes) and some get open late (deeper routes); some teams' pass protection holds up long and some collapses fast. Which receivers suit which team's line? For each team we measured **how long the pocket stays intact** (first frame a pass rusher is within 2 yards of the QB, using a Kaplan-Meier curve so plays that end in a throw before any collapse still count). For each receiver we measured **when he first gets open** on every route (≥3 yards from every coverage defender, ≥3 yards past the line, ≥0.5 s after the snap). **Fit Score** = share of his routes on which he gets open while that team's pocket would still be intact; **in-time rate** = the same, counting only routes where he does get open.
+## Q4–Q5. Does a late-opening receiver need a line that holds? (Receiver-Line Fit)
 
-**Findings:**
-- **Late openers are hurt most by a weak line.** Moving from the 5 best pass-blocking lines (BAL, TB, CLE, ARI, LA) to the 5 worst (MIN, LAC, DEN, NE, MIA) drops the in-time rate by **5.3 points for early openers (~1.4 s)** but **7.1 points for late openers (~1.8 s)**. Across all 99 players, open time and this loss correlate at r = 0.86.
-- **Most at risk:** pass-catching TEs (Tyler Conklin −10.1, Noah Fant −9.8, Jared Cook −9.5, Zach Ertz −9.4) and receiving RBs (Austin Ekeler, J.D. McKissic, D'Andre Swift, about 65–80% in time behind weak lines).
-- **But the receiver still matters most:** team averages differ by only ~5 points, while players' Fit Scores range from 5% to 76%. A coach adding a quick-opening WR doesn't need to worry much about the line; a coach adding a late-opening TE or RB should.
+**Idea.** Some receivers get open early, some late. Some lines hold up and some collapse fast. A late opener behind a fast-collapsing line should be wasted.
 
-**Who uses it:** a GM or coach weighing a receiver for their roster (look up his best and worst team fits in [`output/fit_best_teams.csv`](output/fit_best_teams.csv)).
-**Limitations:** the effect grows with open time partly by construction (later moments always have fewer pockets intact), so the contribution here is measuring *how big* it is; "open" uses fixed distance thresholds; open time also reflects route design; a new team's QB and play-calling would change things; 8 weeks of data.
+**What we measured (tracking data):**
+- **Pocket collapse:** the first frame a pass rusher is within 2 yards of the QB. Per team, we built a Kaplan-Meier curve of "pocket still intact at time t". A play that ends in a throw before any collapse counts as *still intact up to then*.
+- **Receiver open time:** the first frame at least 0.5 s after the snap where he is 3+ yards past the line and 3+ yards from every coverage defender. Per player, we built a Kaplan-Meier curve in which routes cut short by his own QB's throw count as *unknown after this point*, so his own team's line doesn't leak into his profile.
+- **Fit Score** = the chance he gets open while a given team's pocket is still intact. It's computed for 99 players × 32 teams in [`output/fit_scores.csv`](output/fit_scores.csv), with each receiver's 3 best and worst team fits in [`output/fit_best_teams.csv`](output/fit_best_teams.csv).
 
 ![Fit timing](output/fit_timing.png)
 
-![Fit heatmap](output/fit_heatmap.png)
+**Findings:**
+- **The model predicts the effect** (left panel). Moving a receiver from the 5 best pocket-keeping teams to the 5 worst costs early openers (~1.5 s) about 5.0 points and late openers (~1.9 s) about 7.9 points. Open time and loss correlate at r = 0.86 (r = 0.74 among WRs only). The most exposed players are TEs: Tyler Conklin, Jared Cook, Noah Fant and Darren Waller.
+- **Real plays don't show it** (right panel). On each team's actual plays, late openers on weak-line teams were not hurt more than early openers, whether we measured getting open before the throw (+0.2 points, 95% CI −4.2 to +5.1), being targeted, or catching the ball. This holds for both definitions of a weak line: our tracking pocket measure and PFF's charted pressure rate.
+- **Why:** the tracking pocket measure mostly reflects how quickly a QB throws (rank correlation 0.41) rather than PFF's pressure charting (0.05). QBs and play-callers adapt, for example with quicker reads behind a weak line, so the "wasted" late opener doesn't show up in practice.
+- **Takeaway for a GM:** judge a receiver on his own ability to get open, and don't discount a late-opening TE just because your line is weak.
+- **Robustness:** [`output/fit_sensitivity.csv`](output/fit_sensitivity.csv) reruns everything with open distances of 2.5, 3 and 3.5 yd and collapse distances of 1.5, 2 and 2.5 yd. The model's direction holds in every case (r = 0.83–0.89), and the real-play gap includes zero in every case. The model's *size* depends strongly on the collapse distance, so we quote only its direction.
 
-Fit scores for 99 players × 32 teams: [`output/fit_scores.csv`](output/fit_scores.csv)
+## Limitations
 
-## Reproduce (about 15 seconds)
+- **Small sample:** 8 weeks, about 40–70 man routes per player.
+- **Tracking ends** about 0.5 s after the throw, so separation at the catch isn't measured.
+- **Targeted receiver:** taken from `playDescription`. Throwaways have no intended receiver and are excluded. 98.6% of throws that name a receiver were matched.
+- **"Open" and "pocket collapse"** are distance thresholds, not tactical judgments.
+- **Open time** also reflects route design, not just player skill.
+- **The real-play check** compares teams, which also differ in QB, scheme and play-calling.
+
+## Reproduce (about 2 minutes)
 
 ```bash
 git clone --depth 1 https://github.com/ThompsonJamesBliss/nfl-big-data-bowl-regional-event-data.git data-src
 pip install -r requirements.txt
-python src/build_features.py   # -> output/route_separation.csv
-python src/man_beater.py       # -> scores CSV + 3 charts
-python src/fit_score.py        # -> fit scores + heatmap (bonus)
-python src/fit_deep.py         # -> early vs late openers chart + best-fit teams
+python src/build_features.py    # per-route separation at the throw, alignment, depth
+python src/man_beater.py        # Q1-Q3: Man-Beater scores + 3 charts
+python src/fit_score.py         # Q4-Q5: pocket and open-time curves, Fit Scores
+python src/fit_deep.py          # Q4-Q5: model vs real plays chart, best-fit teams
+python src/fit_sensitivity.py   # Q4-Q5: robustness across distance thresholds
 ```
 
-`src/explore.py` and `src/traps.py` are the data checks we ran first: join keys, coverage labels, duplicate snap/throw events, where tracking ends, and target parsing.
+`src/explore.py` and `src/traps.py` are the data checks we ran first: join keys, coverage labels, duplicate snap and throw events, where tracking ends, and target parsing.
