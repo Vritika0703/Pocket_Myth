@@ -227,6 +227,25 @@ html.opening[data-mode="article"] .oa{animation:openA .8s ease calc(var(--d,0ms)
 html.opening[data-mode="game"] .hero__line{animation:lineOn2 .9s cubic-bezier(.2,.7,.2,1) .3s both}
 html.opening .masthead{animation:mastIn .55s cubic-bezier(.2,.8,.2,1) both}
 @media(prefers-reduced-motion:reduce){#sweep{display:none}}
+
+/* Article opening: reader-style sheet with ghost loading lines, then slides up */
+#intro{position:fixed;inset:0;z-index:190;display:none;background:#faf7f0;color:#1c1a16;font-family:Newsreader,Georgia,serif;cursor:pointer;will-change:transform}
+#intro.show{display:block}
+#intro.out{transform:translateY(-102%);transition:transform .8s cubic-bezier(.7,0,.2,1)}
+#intro:focus{outline:none}
+.sheet{position:absolute;top:50%;left:50%;width:min(44rem,88vw);transform:translate(-50%,-50%)}
+.sheet .k{margin:0 0 1rem;font:600 .8125rem/1 "Barlow",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#c8102e;opacity:0;animation:fadeup .6s .1s both}
+.sheet h2{margin:0;max-width:none;font:600 clamp(2rem,5.5vw,3.5rem)/1.08 Newsreader,Georgia,serif;letter-spacing:-.015em;color:#1c1a16;opacity:0;animation:fadeup .7s .25s both}
+.sheet hr{width:100%;height:2px;margin:1.5rem 0 1.25rem;border:0;background:#1c1a16;transform-origin:left;transform:scaleX(0);animation:draw .8s .7s cubic-bezier(.2,.7,.2,1) both}
+.sheet .ln{display:block;height:.7rem;margin:0 0 .8rem;border-radius:2px;background:linear-gradient(90deg,#e8e1d0 25%,#f3eee2 50%,#e8e1d0 75%) 0 0/200% 100%;transform-origin:left;transform:scaleX(0);animation:draw .7s cubic-bezier(.2,.7,.2,1) both,shimmer 1.4s linear infinite}
+.sheet .ln:nth-of-type(1){width:100%;animation-delay:.9s,.9s}.sheet .ln:nth-of-type(2){width:92%;animation-delay:1.02s,1.02s}.sheet .ln:nth-of-type(3){width:97%;animation-delay:1.14s,1.14s}.sheet .ln:nth-of-type(4){width:60%;animation-delay:1.26s,1.26s}
+.sheet .open{margin:1.25rem 0 0;font:600 .9375rem "Barlow",sans-serif;color:#5b564d;opacity:0;animation:fadeup .5s 1.5s both}
+@keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes draw{to{transform:scaleX(1)}}
+@keyframes shimmer{to{background-position:-200% 0}}
+.intro__skip{position:absolute;top:.9rem;right:clamp(1rem,3vw,2.5rem);min-height:44px;padding:.5rem 1rem;font:600 .9375rem "Barlow",sans-serif;color:#1c1a16;background:rgba(127,127,127,.12);border:1px solid #1c1a16;border-radius:2px;cursor:pointer}
+.intro__skip:hover{background:rgba(127,127,127,.28)}
+@media(prefers-reduced-motion:reduce){#intro{display:none!important}}
 @keyframes enter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .sec.enter,#top.enter{animation:enter .45s cubic-bezier(.2,.7,.2,1) both}
 .sec.enter .tile,.sec.enter .panel,.go.enter .go__c{animation:enter .55s cubic-bezier(.2,.7,.2,1) both}
@@ -242,6 +261,10 @@ html:not(.choosing) #choose{display:none}
 </style>
 </head>
 <body>
+<div id="intro" role="dialog" aria-modal="true" aria-label="Opening the article" tabindex="-1">
+  <div class="sheet"><p class="k">2021 NFL tracking data</p><h2>Is he good, and would he fit our QB?</h2><hr><span class="ln"></span><span class="ln"></span><span class="ln"></span><span class="ln"></span><p class="open">Opening the article…</p></div>
+  <button type="button" class="intro__skip" id="iskip">Skip →</button>
+</div>
 <div id="sweep" aria-hidden="true"></div>
 <div id="choose" role="dialog" aria-modal="true" aria-labelledby="choose-t" hidden>
   <div class="choose__head">
@@ -496,9 +519,17 @@ document.querySelectorAll(".go__c").forEach(b=>b.onclick=()=>show(b.dataset.t));
 document.querySelectorAll(".tab").forEach((b,i,all)=>{b.onclick=()=>show(b.dataset.t);b.onkeydown=e=>{const d=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(d){const n=all[(i+d+all.length)%all.length];n.focus();show(n.dataset.t);e.preventDefault()}}});
 window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
 show(location.hash.slice(1));
-document.querySelectorAll('input[name="mode"]').forEach(r=>{r.checked=r.value===document.documentElement.dataset.mode;r.onchange=()=>{document.documentElement.dataset.mode=r.value;try{localStorage.setItem("mbs-mode",r.value)}catch(e){}render();renderVal();playOpen(r.value)}});
+document.querySelectorAll('input[name="mode"]').forEach(r=>{r.checked=r.value===document.documentElement.dataset.mode;r.onchange=()=>{document.documentElement.dataset.mode=r.value;try{localStorage.setItem("mbs-mode",r.value)}catch(e){}render();renderVal();if(r.value==="article")articleIntro(()=>playOpen("article"));else playOpen(r.value)}});
 document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement.tagName!=="INPUT"){e.preventDefault();$("pl").focus()}});
 
+let introTimer=null,introDone=null;
+function introKey(e){if(e.key==="Escape"||e.key==="Enter"||e.key===" "){e.preventDefault();closeIntro()}}
+function closeIntro(){const it=$("intro");if(!introDone)return;clearTimeout(introTimer);const cb=introDone;introDone=null;window.removeEventListener("keydown",introKey);
+  it.classList.add("out");setTimeout(()=>{it.classList.remove("show","out");cb()},800)}
+function articleIntro(cb){if(matchMedia("(prefers-reduced-motion: reduce)").matches){cb();return}
+  const it=$("intro");it.classList.remove("out");void it.offsetWidth;it.classList.add("show");introDone=cb;
+  it.onclick=closeIntro;$("iskip").onclick=e=>{e.stopPropagation();closeIntro()};window.addEventListener("keydown",introKey);
+  introTimer=setTimeout(closeIntro,2800);setTimeout(()=>it.focus({preventScroll:true}),50)}
 let openTimer=null;
 function playOpen(mode){const d=document.documentElement;if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;clearTimeout(openTimer);
   d.classList.remove("opening");document.querySelectorAll(".oa").forEach(e=>e.classList.remove("oa"));
@@ -516,7 +547,7 @@ function playOpen(mode){const d=document.documentElement;if(matchMedia("(prefers
   render();renderVal();show("top");$("pl").blur();
   if(matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.remove("choosing");return}
   ch.classList.add("leaving",m==="game"?"pg":"pa");
-  setTimeout(()=>playOpen(m),450);
+  setTimeout(()=>{if(m==="article")articleIntro(()=>playOpen("article"));else playOpen(m)},450);
   setTimeout(()=>ch.classList.add("fade"),700);
   setTimeout(()=>{document.documentElement.classList.remove("choosing");ch.classList.remove("leaving","pg","pa","fade")},1150)});
  ch.addEventListener("keydown",e=>{if(e.key==="Tab"){const bs=[...ch.querySelectorAll(".pick")];const i=bs.indexOf(document.activeElement);e.preventDefault();bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}if(e.key==="ArrowLeft"||e.key==="ArrowRight")ch.querySelectorAll(".pick")[e.key==="ArrowLeft"?0:1].focus()})})();
