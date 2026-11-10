@@ -9,12 +9,11 @@ Reads the outputs of fit_score.py. Headline uses WRs and TEs (RBs start behind t
    and complete fewer passes, compared with early openers? (difference-in-differences, game bootstrap)
 3. Line-strength check: does our tracking-based pocket measure agree with PFF's pressure charting?
 
-Run: python src/fit_deep.py [--tag ""]      Outputs: output/fit_timing.png, output/fit_best_teams.csv
+Run: python src/fit_deep.py [--tag ""]      Output: output/fit_best_teams.csv (results printed)
 """
 import argparse
 import os
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -130,42 +129,3 @@ if __name__ == "__main__":
     bt["loss_pts"] = (bt["best_in_time_%"] - bt["worst_in_time_%"]).round(1)
     bt.to_csv(f"{OUT}/fit_best_teams.csv", index=False)
     print("\n", bt.head(8).to_string(index=False))
-
-    # ---------- figure ----------
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(14, 5.6), gridspec_kw={"width_ratios": [1.4, 1]})
-    s = wt.sort_values("median_open_t")
-    colors = {"WR": "#2a6fdb", "TE": "#e07b24"}
-    for pos, d in s.groupby("pos"):
-        a1.scatter(d["median_open_t"], d["loss"], s=34, color=colors[pos], label=pos, alpha=0.8,
-                   edgecolor="white", lw=0.6)
-    m, b = np.polyfit(s["median_open_t"], s["loss"], 1)
-    xs = np.linspace(s["median_open_t"].min(), s["median_open_t"].max(), 10)
-    a1.plot(xs, m * xs + b, color="#444", lw=1.5, ls="--")
-    for i, name in enumerate(s.nlargest(5, "loss").index):
-        a1.annotate(name, (s.loc[name, "median_open_t"], s.loc[name, "loss"]),
-                    xytext=(-6, 8) if i % 2 else (6, -12), ha="right" if i % 2 else "left",
-                    textcoords="offset points", fontsize=8)
-    a1.set_xlabel("When he usually gets open (median seconds after the snap)")
-    a1.set_ylabel("Points lost: best-5 → worst-5 pass-blocking lines\n(share of his opens with the pocket intact)")
-    a1.set_title(f"Model prediction: later openers lose more (r = {res['corr']:.2f})", loc="left")
-    a1.legend(frameon=False)
-    a1.spines[["top", "right"]].set_visible(False)
-
-    lab = {"in_time": "Got open\nbefore the throw", "tgt": "Was\ntargeted", "catch": "Caught\nthe ball"}
-    keys = list(lab)
-    xs = np.arange(len(keys))
-    for j, ((name, rc), c) in enumerate(zip(rcs.items(), ["#0c447c", "#7fb8e6"])):
-        y = np.array([rc[k]["did"] for k in keys])
-        err = np.array([[rc[k]["did"] - rc[k]["lo"] for k in keys], [rc[k]["hi"] - rc[k]["did"] for k in keys]])
-        a2.bar(xs + (j - 0.5) * 0.38, y, width=0.38, yerr=err, capsize=4, color=c, label=name)
-    a2.set_xticks(xs, [lab[k] for k in keys])
-    a2.axhline(0, color="#333", lw=1)
-    a2.set_ylabel("Extra drop for late openers on weak-line teams\nvs early openers (points, ±95% CI)")
-    a2.set_title("Reality: no extra penalty on actual plays", loc="left")
-    a2.legend(frameon=False, fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=1)
-    a2.spines[["top", "right"]].set_visible(False)
-    fig.suptitle("Receiver-Line Fit: the timing model says late openers need a strong line; real plays say they don't  (WR & TE, 2021 Wk 1–8)",
-                 x=0.01, ha="left", fontsize=13)
-    fig.tight_layout()
-    fig.savefig(f"{OUT}/fit_timing.png", dpi=150)
-    print("saved output/fit_timing.png")

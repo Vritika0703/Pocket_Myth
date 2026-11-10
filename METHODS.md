@@ -10,8 +10,6 @@ We answer one question for WRs and TEs, using 2021 NFL tracking data (Weeks 1–
 
 **Why getting open matters:** completion rises with separation even among throws of the same depth. Short passes go from 23% under 1 yard to 84% at 6+ yards, deep passes from 23% to 69%.
 
-![Separation payoff](output/separation_payoff.png)
-
 **Man score / Zone score:** average separation from the nearest defender at the moment of the throw, minus what a typical player **in the same alignment** (outside WR, slot, inline TE, backfield) gets in that coverage with the same time to throw. Each score is shrunk toward zero according to how noisy the player's sample is (empirical Bayes), so a lucky small sample can't top the list.
 
 ![Man vs zone profile](output/profile_man_zone.png)
@@ -23,7 +21,7 @@ We answer one question for WRs and TEs, using 2021 NFL tracking data (Weeks 1–
 | **Zone specialist** (5) | K.J. Osborn, Demarcus Robinson, Robert Woods, Tim Patrick |
 | **Below average vs both** (21) | Mike Williams, Ja'Marr Chase, Mike Evans, Chris Godwin (players who win through contested catches, not separation) |
 
-Man and zone scores are related (r = 0.59): good separators tend to be good against both, but the specialists show where a coordinator should use a player. Full table: [`player_profiles.csv`](output/player_profiles.csv). Man-coverage leaderboard: [`man_beater_leaderboard.png`](output/man_beater_leaderboard.png).
+Man and zone scores are related (r = 0.59): good separators tend to be good against both, but the specialists show where a coordinator should use a player. Full table: [`player_profiles.csv`](output/player_profiles.csv). Man-coverage scores: [`man_beater_scores.csv`](output/man_beater_scores.csv).
 
 ## Part 2: If a team adds him, would he fit that team's quarterback?
 
@@ -56,7 +54,6 @@ Seven teams changed quarterbacks in Weeks 1–8 (CHI, DAL, HOU, MIA, NYJ, SEA, S
 
 We first tested the common assumption that late-opening receivers are wasted behind a weak line. A timing model predicts it, but on actual plays late openers on weak-line teams got open, got targeted and caught the ball no worse, relative to early openers, than on strong-line teams. That holds with both a tracking-based line measure and PFF's pressure rate, and across five distance thresholds ([`fit_sensitivity.csv`](output/fit_sensitivity.csv)). The tracking pocket measure mostly reflects how fast the QB throws (rank correlation 0.41), which is why Part 2 is built on the QB's clock.
 
-![Line vs reality](output/fit_timing.png)
 
 ## Who uses it
 
@@ -85,10 +82,10 @@ We first tested the common assumption that late-opening receivers are wasted beh
 git clone --depth 1 https://github.com/ThompsonJamesBliss/nfl-big-data-bowl-regional-event-data.git data-src
 pip install -r requirements.txt
 python src/build_features.py    # per-route separation at the throw, alignment, depth, target
-python src/man_beater.py        # Part 1: separation payoff chart, man-coverage leaderboard
+python src/man_beater.py        # Part 1: man-coverage scores, separation payoff numbers
 python src/fit_score.py         # open-time and pocket curves for every player and team
 python src/profile_fit.py       # Part 1 profile, Part 2 QB fit, QB-change validation
-python src/fit_deep.py          # why the QB, not the line: model vs real plays
+python src/fit_deep.py          # why the QB, not the line: model vs real plays (printed)
 python src/fit_sensitivity.py   # robustness of the line result across distance thresholds
 python src/qb_clock.py          # extra: each receiver's open time vs his own QB's clock
 ```
