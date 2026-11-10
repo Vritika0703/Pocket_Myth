@@ -383,7 +383,7 @@ html:not(.choosing) #choose{display:none}
     </div>
     <div class="col">
     <figure class="panel"><svg id="val" viewBox="0 0 760 520" role="img" aria-label="Predicted against actual change for 28 receivers"></svg>
-      <ul class="legend"><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:var(--ink)"><circle cx="6" cy="6" r="5"/></svg>50+ routes under both QBs</li><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:none;stroke:var(--edge);stroke-width:2"><circle cx="6" cy="6" r="4.5"/></svg>fewer routes</li><li>Each mark is one receiver. Top-right or bottom-left = the model got the direction right. Hover for the name.</li></ul>
+      <ul class="legend"><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:var(--ink)"><circle cx="6" cy="6" r="5"/></svg>50+ routes under both QBs</li><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:none;stroke:var(--edge);stroke-width:2"><circle cx="6" cy="6" r="4.5"/></svg>fewer routes</li><li>Each mark is one receiver. Top-right or bottom-left = the model got the direction right. Hover for the name. Your selected receiver turns yellow if he is in the test.</li></ul>
     </figure>
     </div>
   </div>
@@ -501,17 +501,18 @@ function renderVal(){
     el("text",{x:W-m.r,y:H-8,"text-anchor":"end"},"What we predicted →"),el("text",{x:m.l+4,y:m.t+10},"↑ What happened"));
   all.forEach(r=>{const big=Math.min(r.routes_A,r.routes_B)>=50;
     const c=el("circle",{cx:X(r.pred_change),cy:Y(r.actual_change),r:big?11:7,fill:big?css("--ink"):"none",stroke:big?css("--ink"):css("--edge"),"stroke-width":1.8});
+    if(r.player===cur.n){c.setAttribute("stroke",css("--accent"));c.setAttribute("stroke-width",4);c.setAttribute("r",13);c.setAttribute("fill",css("--accent"))}
     c.appendChild(el("title",{},`${r.player} (${r.team}): ${r.qb_A} → ${r.qb_B}. Predicted ${r.pred_change}, actual ${r.actual_change}`));add(s,c)});
   add(s,el("text",{x:m.l+4,y:H-m.b-8},""));
 }
 
-function render(){cp.sync();ct.sync();renderP1();renderScatter();renderP2()}
+function render(){cp.sync();ct.sync();renderP1();renderScatter();renderP2();if(typeof renderVal==="function"&&$("val")&&D.val)renderVal()}
 render();renderVal();
 const TABS=["top","q1","q2","proof"];
 let cur_tab=null;
 function swap(id){TABS.forEach(t=>{const e=$(t);e.hidden=t!==id;e.classList.remove("enter")});$(id).classList.add("enter");$(id).scrollTop=0;document.querySelectorAll(".tab").forEach(b=>{const on=b.dataset.t===id;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1});try{history.replaceState(null,"","#"+id)}catch(e){}window.scrollTo(0,0)}
 let curTab="top";
-function place(id){const n=$("ctl"),bar=$("barslot");if(id==="top"){n.classList.add("controls--hero");$("top").insertBefore(n,$("top").querySelector(".go"));bar.hidden=true}else if(id==="proof"){bar.hidden=true}else{n.classList.remove("controls--hero");bar.appendChild(n);bar.hidden=false}}
+function place(id){const n=$("ctl"),bar=$("barslot");if(id==="top"){n.classList.add("controls--hero");$("top").insertBefore(n,$("top").querySelector(".go"));bar.hidden=true}else{n.classList.remove("controls--hero");bar.appendChild(n);bar.hidden=false}}
 function show(id){if(!TABS.includes(id))id="top";curTab=id;place(id);if(id===cur_tab)return;const first=cur_tab===null;cur_tab=id;
   if(!first&&document.startViewTransition&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.startViewTransition(()=>swap(id));else swap(id)}
 document.querySelectorAll(".go__c").forEach(b=>b.onclick=()=>show(b.dataset.t));
