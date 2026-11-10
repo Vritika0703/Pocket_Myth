@@ -1,0 +1,48 @@
+nflId,displayName,pos,man_routes,man_score,zone_routes,zone_score,open_by_s,open_by_4s,own_team,type,fit_own,best_team,fit_best,worst_team,fit_worst,fit_range
+34540,Jared Cook,TE,58,-0.014,103,-0.543,2.8,0.65,LAC,Below average vs both,0.482,BAL,0.534,PIT,0.421,0.113
+35521,Emmanuel Sanders,WR,63,0.043,117,-0.01,1.6,0.722,BUF,Man specialist,0.662,PHI,0.671,PIT,0.623,0.048
+38696,Marvin Jones,WR,49,0.051,155,0.066,1.7,0.764,JAX,Beats both,0.716,PHI,0.726,PIT,0.671,0.055
+38947,Cole Beasley,WR,58,0.08,111,-0.195,2.4,0.603,BUF,Man specialist,0.533,PHI,0.545,PIT,0.472,0.073
+39989,Robert Woods,WR,55,-0.086,140,0.171,2.0,0.687,LA,Zone specialist,0.611,PHI,0.633,PIT,0.566,0.067
+40011,Travis Kelce,TE,61,-0.243,172,-0.411,2.9,0.602,KC,Below average vs both,0.491,PHI,0.515,PIT,0.442,0.073
+40024,Keenan Allen,WR,69,0.071,137,-0.143,2.5,0.664,LAC,Man specialist,0.541,BAL,0.576,PIT,0.487,0.089
+40488,Adam Thielen,WR,70,-0.172,134,-0.124,2.1,0.764,MIN,Below average vs both,0.623,PHI,0.656,PIT,0.568,0.088
+41233,Mike Evans,WR,100,-0.176,142,-0.681,2.4,0.613,TB,Below average vs both,0.521,PHI,0.557,PIT,0.497,0.06
+41246,Brandin Cooks,WR,55,0.03,135,0.11,1.8,0.757,HOU,Beats both,0.648,PHI,0.683,PIT,0.616,0.067
+42347,Amari Cooper,WR,70,0.17,124,-0.085,1.8,0.726,DAL,Man specialist,0.662,PHI,0.683,PIT,0.624,0.059
+42363,Nelson Agholor,WR,84,-0.113,117,-0.528,1.7,0.649,NE,Below average vs both,0.591,PHI,0.613,PIT,0.577,0.036
+42489,Stefon Diggs,WR,60,-0.031,119,-0.123,1.8,0.677,BUF,Below average vs both,0.621,PHI,0.629,PIT,0.58,0.049
+42500,C.J. Uzomah,TE,63,-0.299,106,-0.128,3.1,0.579,CIN,Below average vs both,0.46,PHI,0.499,PIT,0.426,0.073
+43010,Adam Humphries,WR,61,0.046,116,0.177,2.0,0.754,WAS,Beats both,0.661,PHI,0.667,PIT,0.583,0.084
+43324,Hunter Henry,TE,68,0.127,101,0.378,3.3,0.559,NE,Beats both,0.409,BAL,0.457,PIT,0.379,0.079
+43344,Tyler Boyd,WR,72,-0.307,122,-0.367,2.3,0.614,CIN,Below average vs both,0.526,PHI,0.556,PIT,0.498,0.058
+43399,Tyler Higbee,TE,46,0.004,119,-0.555,3.0,0.615,LA,Man specialist,0.475,BAL,0.51,PIT,0.418,0.092
+43415,Demarcus Robinson,WR,51,-0.025,134,0.201,1.8,0.752,KC,Zone specialist,0.678,PHI,0.699,PIT,0.635,0.064
+43454,Tyreek Hill,WR,55,0.029,154,0.066,1.8,0.728,KC,Beats both,0.652,PHI,0.672,PIT,0.612,0.06
+43584,Kalif Raymond,WR,57,0.093,162,-0.046,1.8,0.764,DET,Man specialist,0.675,PHI,0.698,PIT,0.621,0.077
+43808,Robby Anderson,WR,70,0.081,148,-0.088,1.7,0.743,CAR,Man specialist,0.677,PHI,0.691,PIT,0.629,0.062
+44819,Mike Williams,WR,63,-0.31,110,-0.577,3.1,0.539,LAC,Below average vs both,0.449,BAL,0.478,PIT,0.408,0.069
+44881,Cooper Kupp,WR,57,0.081,151,0.196,2.5,0.648,LA,Beats both,0.541,PHI,0.57,PIT,0.488,0.082
+44896,Chris Godwin,WR,95,-0.167,151,-0.634,2.3,0.623,TB,Below average vs both,0.545,PHI,0.579,PIT,0.518,0.061
+45102,Zach Pascal,WR,52,-0.104,138,-0.044,1.9,0.736,IND,Below average vs both,0.646,PHI,0.656,PIT,0.584,0.072
+45267,Tim Patrick,WR,55,-0.021,147,0.17,1.7,0.77,DEN,Zone specialist,0.687,PHI,0.702,PIT,0.632,0.071
+46093,D.J. Moore,WR,68,-0.059,151,-0.134,2.0,0.699,CAR,Below average vs both,0.633,PHI,0.645,PIT,0.586,0.059
+46109,Courtland Sutton,WR,58,-0.207,148,-0.267,1.7,0.739,DEN,Below average vs both,0.652,PHI,0.667,PIT,0.608,0.059
+46111,Mike Gesicki,TE,68,-0.191,127,-0.405,2.3,0.73,MIA,Below average vs both,0.599,PHI,0.64,PIT,0.55,0.091
+47791,T.J. Hockenson,TE,59,-0.101,173,-0.551,2.5,0.714,DET,Below average vs both,0.582,PHI,0.613,PIT,0.523,0.09
+47803,Noah Fant,TE,49,0.056,136,0.276,2.9,0.637,DEN,Beats both,0.489,BAL,0.519,PIT,0.418,0.101
+47839,Mecole Hardman,WR,46,0.004,140,0.508,1.6,0.755,KC,Beats both,0.679,PHI,0.698,PIT,0.638,0.06
+47859,Terry McLaurin,WR,77,-0.296,153,-0.39,2.2,0.642,WAS,Below average vs both,0.567,PHI,0.574,PIT,0.517,0.057
+48097,Jakobi Meyers,WR,95,0.019,137,-0.251,2.5,0.678,NE,Man specialist,0.549,BAL,0.597,PIT,0.512,0.085
+52425,CeeDee Lamb,WR,69,-0.06,134,-0.192,1.8,0.777,DAL,Below average vs both,0.654,PHI,0.687,PIT,0.608,0.079
+52430,Justin Jefferson,WR,69,-0.082,131,-0.193,2.0,0.75,MIN,Below average vs both,0.629,PHI,0.657,PIT,0.586,0.071
+52442,Michael Pittman,WR,53,0.144,145,0.392,1.8,0.765,IND,Beats both,0.689,PHI,0.699,PIT,0.626,0.073
+52450,Laviska Shenault,WR,41,0.185,124,0.115,1.9,0.711,JAX,Beats both,0.641,PHI,0.654,PIT,0.593,0.061
+52465,Van Jefferson,WR,47,-0.038,126,-0.362,2.2,0.62,LA,Below average vs both,0.564,PHI,0.58,PIT,0.532,0.048
+52489,Bryan Edwards,WR,70,-0.199,100,0.016,2.2,0.64,LV,Zone specialist,0.562,PHI,0.584,PIT,0.519,0.065
+52584,K.J. Osborn,WR,63,-0.006,101,0.388,2.7,0.677,MIN,Zone specialist,0.526,PHI,0.56,PIT,0.476,0.084
+53433,Kyle Pitts,TE,56,-0.219,145,-0.445,2.2,0.638,ATL,Below average vs both,0.555,PHI,0.587,PIT,0.518,0.069
+53434,Ja'Marr Chase,WR,72,-0.351,135,-0.511,2.7,0.641,CIN,Below average vs both,0.511,PHI,0.55,PIT,0.48,0.07
+53435,Jaylen Waddle,WR,69,0.013,153,0.138,2.0,0.692,MIA,Beats both,0.613,PHI,0.641,PIT,0.577,0.064
+53439,DeVonta Smith,WR,53,0.012,125,-0.078,2.2,0.642,PHI,Man specialist,0.587,PHI,0.587,PIT,0.532,0.054
+53541,Amon-Ra St. Brown,WR,46,0.039,148,-0.332,2.0,0.717,DET,Man specialist,0.624,PHI,0.647,PIT,0.562,0.084
