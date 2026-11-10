@@ -14,9 +14,9 @@ html{--good:#8fe3b0;--bad:#ff9a8f}
 html[data-mode="article"]{--good:#1d6b3a;--bad:#b00e28}
 .pos{color:var(--good)}.neg{color:var(--bad)}
 .controls{border-top:1px solid var(--rule)}
-.controls--hero{margin-top:1.25rem;border-top:0}
-.controls--hero .wrap{padding:.9rem var(--gutter);background:var(--panel);border-radius:var(--radius)}
-[data-mode="game"] .controls--hero{margin-left:auto;margin-right:auto;max-width:calc(var(--max) + 2*var(--gutter))}
+.controls--hero{margin-top:1.25rem;margin-bottom:.75rem;border-top:0}
+.controls--hero>.wrap{max-width:none;padding:.75rem 1.1rem;background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius)}
+[data-mode="game"] .controls--hero>.wrap{background:var(--panel)}
 .hero .combo ul{top:auto;bottom:calc(100% + 4px);max-height:16rem}
 .controls .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.25rem;padding-top:.5rem;padding-bottom:.5rem;font-family:var(--ui)}
 .ctl{display:flex;align-items:center;gap:.5rem}
@@ -90,7 +90,7 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 .tab{min-height:44px;padding:.5rem 1rem;font:600 .9375rem/1 var(--ui);color:var(--soft);background:none;border:0;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer}
 .tab:hover{color:var(--ink)}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
-.go{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:1.5rem}
+.go{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:0}
 .go__c{display:flex;flex-direction:column;gap:.25rem;padding:.9rem 1.1rem;text-align:left;font:400 .9375rem/1.35 var(--ui);color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-top:3px solid var(--accent);border-radius:var(--radius);cursor:pointer}
 .go__c b{font:800 1.375rem/1.1 var(--head)}
 [data-mode="article"] .go__c b{font-weight:600}
@@ -137,7 +137,7 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
  [data-mode="game"] .hero__dek{font-size:clamp(1rem,2.6vh,1.375rem)}
  [data-mode="game"] .hero__answer{padding:.9rem 1.2rem;font-size:.9375rem;line-height:1.45}
  [data-mode="game"] .foot{margin-top:.6rem;padding-top:.6rem;font-size:.8125rem;line-height:1.45}
- [data-mode="game"] .go{margin-top:1rem}
+
 }
 </style>
 </head>
@@ -174,7 +174,7 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
     </div>
     <div class="hero__answer"><p><strong>The short answer:</strong> it depends on his quarterback's speed. Pittsburgh's quick-throwing QB is a worse fit for every one of the 47 receivers. Philadelphia and Baltimore fit best. When seven teams changed QB mid-season, the model got the direction right for 71% of receivers.</p></div>
   </div>
-  <div class="controls controls--hero"><div class="wrap">
+  <div class="controls controls--hero wrap"><div class="wrap">
     <div class="ctl"><label for="pl">Receiver</label><div class="combo" id="plc"><input id="pl" role="combobox" aria-expanded="false" aria-controls="pll" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search a player"><ul id="pll" role="listbox" aria-label="Receivers"></ul></div></div>
     <div class="ctl"><label for="tm">If he joins</label><div class="combo t" id="tmc"><input id="tm" role="combobox" aria-expanded="false" aria-controls="tml" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search a team"><ul id="tml" role="listbox" aria-label="Teams"></ul></div></div>
     <p id="live" aria-live="polite"></p>
