@@ -139,6 +139,19 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
  [data-mode="game"] .foot{margin-top:.6rem;padding-top:.6rem;font-size:.8125rem;line-height:1.45}
 
 }
+/* Hero polish: no heavy dark boxes over the turf stripes */
+.controls--hero>.wrap,[data-mode="game"] .controls--hero>.wrap{background:none;border:0;border-top:1px solid var(--rule);border-radius:0;padding:1rem 0 .25rem;gap:.75rem 1.5rem;align-items:flex-end}
+.controls--hero .ctl{flex-direction:column;align-items:flex-start;gap:.35rem}
+.controls--hero .combo input{background:color-mix(in srgb,var(--ink) 8%,transparent);border-color:color-mix(in srgb,var(--ink) 35%,transparent)}
+.controls--hero .combo input:hover,.controls--hero .combo input:focus{border-color:var(--ink);background:color-mix(in srgb,var(--ink) 14%,transparent)}
+.controls--hero #live{align-self:center;padding:.4rem .9rem;border-radius:99px;background:color-mix(in srgb,var(--ink) 9%,transparent);flex:0 1 auto}
+.controls--hero .combo ul{background:var(--bg)}
+[data-mode="game"] .hero__answer{background:none;padding:.1rem 0 .1rem 1.1rem;border-left:3px solid var(--ink);border-radius:0}
+[data-mode="article"] .hero__answer{border-left:3px solid var(--ink);border-top:0;padding:.1rem 0 .1rem 1.1rem}
+.go__c,[data-mode="game"] .go__c{position:relative;background:none;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-top-width:1px;padding:.85rem 2.75rem .85rem 1.1rem}
+.go__c::after{content:"\2192";position:absolute;right:1.1rem;top:50%;transform:translateY(-50%);font:600 1.25rem var(--ui);color:var(--soft);transition:transform .2s,color .2s}
+.go__c:hover{background:color-mix(in srgb,var(--ink) 9%,transparent);border-color:var(--ink);transform:none}
+.go__c:hover::after{transform:translate(4px,-50%);color:var(--ink)}
 @keyframes enter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .sec.enter,#top.enter{animation:enter .45s cubic-bezier(.2,.7,.2,1) both}
 .sec.enter .tile,.sec.enter .panel,.go.enter .go__c{animation:enter .55s cubic-bezier(.2,.7,.2,1) both}
@@ -195,8 +208,6 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
     <button class="go__c" data-t="proof"><b>3 · Proof</b><span>Tested on 7 real mid-season QB changes.</span></button>
   </nav>
   <footer class="foot"><div class="wrap">
-  <p><strong>Limits.</strong> Only 8 weeks of 2021 games, so one player has just 40 to 70 routes against man coverage and his score can be off. Part 2 is an informed estimate, tested on 7 teams, not a guarantee. "Open" means at least 3 yards past the line and 3 yards from every defender.</p>
-  <p>Method and code: <a href="https://github.com/Vritika0703/man-beater-score">github.com/Vritika0703/man-beater-score</a> · <a href="https://github.com/Vritika0703/man-beater-score/blob/main/METHODS.md">METHODS.md</a>. Press <span class="kbd">/</span> to search players. Fonts: Barlow and Newsreader, SIL Open Font License.</p>
 </div></footer>
 </section>
 
