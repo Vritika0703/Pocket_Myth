@@ -8,7 +8,7 @@
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-800.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
-<script>(function(){try{var m=localStorage.getItem("mbs-mode");if(m==="game"||m==="article")document.documentElement.setAttribute("data-mode",m)}catch(e){}})()</script>
+<script>(function(){try{if(!sessionStorage.getItem("mbs-chosen"))document.documentElement.classList.add("choosing")}catch(e){document.documentElement.classList.add("choosing")}try{var m=localStorage.getItem("mbs-mode");if(m==="game"||m==="article")document.documentElement.setAttribute("data-mode",m)}catch(e){}})()</script>
 <style>
 html{--good:#8fe3b0;--bad:#ff9a8f}
 html[data-mode="article"]{--good:#1d6b3a;--bad:#b00e28}
@@ -110,36 +110,36 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 .cols,.col{display:grid;gap:.75rem;align-content:start}
 .foot{margin-top:1.5rem;padding:1rem 0 0}
 [data-mode="game"] .foot{background:none;border-top:1px solid var(--rule)}
-/* One-screen layout: Game mode on roomy screens. Article mode and small screens scroll within a tab. */
+/* One-screen layout: Both modes on roomy screens. Small screens scroll within a tab. */
 @media(min-width:1000px) and (min-height:620px){
- html[data-mode="game"],[data-mode="game"] body{height:100%;overflow:hidden}
- [data-mode="game"] body{display:flex;flex-direction:column}
- [data-mode="game"] .masthead{position:static;flex:none}
- [data-mode="game"] main{flex:1;min-height:0;display:flex;flex-direction:column}
- [data-mode="game"] main>section{flex:1;min-height:0;overflow:auto;padding:1rem 0 1.25rem;display:flex;flex-direction:column}
- [data-mode="game"] .sec>.wrap{flex:1;min-height:0}
- [data-mode="game"] .cols{gap:1.25rem;align-items:stretch;grid-template-rows:minmax(0,1fr)}
- [data-mode="game"] .c1{grid-template-columns:minmax(0,.85fr) minmax(0,1fr) minmax(0,1.15fr)}
- [data-mode="game"] .c2{grid-template-columns:repeat(3,minmax(0,1fr))}
- [data-mode="game"] .c3{grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr)}
- [data-mode="game"] .col{display:flex;flex-direction:column;gap:.6rem;min-height:0}
- [data-mode="game"] .col>.panel:has(#bars){flex:0 0 auto}
- [data-mode="game"] .col>.panel{flex:1 1 0;min-height:0;display:flex;flex-direction:column;padding:.75rem}
- [data-mode="game"] .panel svg{flex:1 1 0;min-height:0;width:100%;height:100%}
- [data-mode="game"] .panel #bars{flex:0 0 auto;height:auto}
- [data-mode="game"] .panel .legend{flex:none}
- [data-mode="game"] .sec__head{display:block;margin:0}
- [data-mode="game"] h2{max-width:none;margin-bottom:.4rem;font-size:clamp(1.5rem,3.6vh,2.1rem)}
- [data-mode="game"] .sec__intro p{max-width:none;margin:0;font-size:.9375rem;line-height:1.4}
- [data-mode="game"] .help{grid-template-columns:1fr;gap:.35rem;margin:0;padding:.6rem .85rem;font-size:.875rem;line-height:1.35}
- [data-mode="game"] .tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;margin:0}
- [data-mode="game"] .tile{padding:.6rem .75rem}
- [data-mode="game"] .tile .v{font-size:clamp(1.75rem,4.6vh,2.5rem)}
- [data-mode="game"] .tile .v.sm{font-size:clamp(1.15rem,3vh,1.5rem);padding-top:.25rem}
- [data-mode="game"] .tile .s{font-size:.8125rem;line-height:1.3}
- [data-mode="game"] .verdict{margin:.25rem 0;max-width:none;font-size:clamp(1.25rem,3vh,1.75rem)}
- [data-mode="game"] .note{margin:0;padding:.6rem .85rem;font-size:.875rem;line-height:1.4}
- [data-mode="game"] .teams{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 .75rem;overflow:auto}
+ html[data-mode],[data-mode] body{height:100%;overflow:hidden}
+ [data-mode] body{display:flex;flex-direction:column}
+ [data-mode] .masthead{position:static;flex:none}
+ [data-mode] main{flex:1;min-height:0;display:flex;flex-direction:column}
+ [data-mode] main>section{flex:1;min-height:0;overflow:auto;padding:1rem 0 1.25rem;display:flex;flex-direction:column}
+ [data-mode] .sec>.wrap{flex:1;min-height:0}
+ [data-mode] .cols{gap:1.25rem;align-items:stretch;grid-template-rows:minmax(0,1fr)}
+ [data-mode] .c1{grid-template-columns:minmax(0,.85fr) minmax(0,1fr) minmax(0,1.15fr)}
+ [data-mode] .c2{grid-template-columns:repeat(3,minmax(0,1fr))}
+ [data-mode] .c3{grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr)}
+ [data-mode] .col{display:flex;flex-direction:column;gap:.6rem;min-height:0}
+ [data-mode] .col>.panel:has(#bars){flex:0 0 auto}
+ [data-mode] .col>.panel{flex:1 1 0;min-height:0;display:flex;flex-direction:column;padding:.75rem}
+ [data-mode] .panel svg{flex:1 1 0;min-height:0;width:100%;height:100%}
+ [data-mode] .panel #bars{flex:0 0 auto;height:auto}
+ [data-mode] .panel .legend{flex:none}
+ [data-mode] .sec__head{display:block;margin:0}
+ [data-mode] h2{max-width:none;margin-bottom:.4rem;font-size:clamp(1.5rem,3.6vh,2.1rem)}
+ [data-mode] .sec__intro p{max-width:none;margin:0;font-size:.9375rem;line-height:1.4}
+ [data-mode] .help{grid-template-columns:1fr;gap:.35rem;margin:0;padding:.6rem .85rem;font-size:.875rem;line-height:1.35}
+ [data-mode] .tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;margin:0}
+ [data-mode] .tile{padding:.6rem .75rem}
+ [data-mode] .tile .v{font-size:clamp(1.75rem,4.6vh,2.5rem)}
+ [data-mode] .tile .v.sm{font-size:clamp(1.15rem,3vh,1.5rem);padding-top:.25rem}
+ [data-mode] .tile .s{font-size:.8125rem;line-height:1.3}
+ [data-mode] .verdict{margin:.25rem 0;max-width:none;font-size:clamp(1.25rem,3vh,1.75rem)}
+ [data-mode] .note{margin:0;padding:.6rem .85rem;font-size:.875rem;line-height:1.4}
+ [data-mode] .teams{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 .75rem;overflow:auto}
  [data-mode="game"] .team{min-height:1.6rem;padding:.1rem .3rem}
  [data-mode="game"] .panel h3{font-size:1.2rem}
  [data-mode="game"] .panel .cap{margin-bottom:.4rem}
@@ -164,6 +164,33 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 .go__c::after{content:"\2192";position:absolute;right:1.1rem;top:50%;transform:translateY(-50%);font:600 1.25rem var(--ui);color:var(--soft);transition:transform .2s,color .2s}
 .go__c:hover{background:color-mix(in srgb,var(--ink) 9%,transparent);border-color:var(--ink);transform:none}
 .go__c:hover::after{transform:translate(4px,-50%);color:var(--ink)}
+[data-mode="article"] .wrap{max-width:calc(var(--max) + 2 * var(--gutter))}
+@media(min-width:1000px){[data-mode] .wrap,[data-mode] .foot .wrap{max-width:none;padding-left:clamp(1.25rem,3vw,3.5rem);padding-right:clamp(1.25rem,3vw,3.5rem)}}
+[data-mode="article"] .hero{padding-top:clamp(1rem,3vh,2.5rem);padding-bottom:1rem}
+[data-mode="article"] h1{font-size:clamp(2rem,1rem + 4.2vh + 1.5vw,3.5rem)}
+/* Mode chooser */
+#choose{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index:200;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);margin:0;animation:fadein .35s ease both}
+html.choosing #choose{display:grid}
+html:not(.choosing) #choose{display:none}
+.pick{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;height:100%;margin:0;gap:.6rem;padding:clamp(1.5rem,6vw,5rem);text-align:left;border:0;cursor:pointer;font-family:var(--ui);transition:filter .25s}
+.pick small{font:600 .8125rem/1 var(--ui);letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.pick b{font:800 clamp(2.5rem,7vw,5.5rem)/.92 "Barlow Condensed",sans-serif;text-transform:uppercase}
+.pick span{max-width:30ch;font-size:1.125rem;line-height:1.45;opacity:.85}
+.pick i{margin-top:.75rem;font:600 1rem var(--ui);font-style:normal;border-bottom:2px solid currentColor;align-self:flex-start;padding-bottom:.15rem}
+.pick--game{background:#0c3326 repeating-linear-gradient(90deg,transparent 0 56px,rgba(255,255,255,.04) 56px 112px);color:#f4f1e8}
+.pick--game i{border-color:#ffd23f}
+.pick--article{background:#faf7f0;color:#1c1a16}
+.pick--article b{font-family:Newsreader,Georgia,serif;font-weight:600;text-transform:none;letter-spacing:-.015em;line-height:1}
+.pick--article i{border-color:#c8102e}
+.pick:hover{filter:brightness(1.12)}.pick--article:hover{filter:brightness(.96)}
+.pick:focus-visible{outline:4px solid #ffd23f;outline-offset:-8px}
+.pick--article:focus-visible{outline-color:#c8102e}
+#choose h1{position:absolute;top:1.25rem;left:50%;transform:translateX(-50%);z-index:2;margin:0;max-width:none!important;padding:.35rem 1rem;font:800 1.25rem/1 "Barlow Condensed",sans-serif!important;text-transform:uppercase;letter-spacing:.04em;background:#f4f1e8;color:#0c3326;white-space:nowrap}
+@media(max-width:700px){#choose{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr)}.pick{padding:1.25rem 1.5rem}.pick b{font-size:2.5rem}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){#choose{animation:none}}
+[data-mode] .controls--hero>.wrap{padding-left:0;padding-right:0}
+@media(min-width:1000px) and (min-height:620px){[data-mode="article"] .foot{margin-top:.6rem;padding-top:.6rem;font-size:.8125rem;line-height:1.45;border-top:1px solid var(--rule)}[data-mode="article"] .foot p{margin-bottom:.25rem}}
 @keyframes enter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .sec.enter,#top.enter{animation:enter .45s cubic-bezier(.2,.7,.2,1) both}
 .sec.enter .tile,.sec.enter .panel,.go.enter .go__c{animation:enter .55s cubic-bezier(.2,.7,.2,1) both}
@@ -174,9 +201,16 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 .tab,.go__c{transition:background-color .2s,color .2s,border-color .2s,transform .2s}
 .go__c:hover{transform:translateY(-3px)}
 @media(prefers-reduced-motion:reduce){.sec.enter,#top.enter,.sec.enter *{animation:none!important}}
+html.choosing,html.choosing body{overflow:hidden}
+html:not(.choosing) #choose{display:none}
 </style>
 </head>
 <body>
+<div id="choose" role="dialog" aria-modal="true" aria-labelledby="choose-t" hidden>
+  <h1 id="choose-t">Pocket Myth · pick your view</h1>
+  <button class="pick pick--game" data-m="game"><small>Playful · football vibe</small><b>Game<br>mode</b><span>Night-game broadcast look: turf green, big numbers, all on one screen.</span><i>Play it →</i></button>
+  <button class="pick pick--article" data-m="article"><small>Professional · clean</small><b>Article<br>mode</b><span>Newsprint look: calm, serif type, built for reading and scouting reports.</span><i>Read it →</i></button>
+</div>
 <a class="skip" href="#main">Skip to the content</a>
 <header class="masthead" style="display:block">
   <div class="wrap masthead__inner">
@@ -421,6 +455,15 @@ window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
 show(location.hash.slice(1));
 document.querySelectorAll('input[name="mode"]').forEach(r=>{r.checked=r.value===document.documentElement.dataset.mode;r.onchange=()=>{document.documentElement.dataset.mode=r.value;try{localStorage.setItem("mbs-mode",r.value)}catch(e){}render();renderVal()}});
 document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement.tagName!=="INPUT"){e.preventDefault();$("pl").focus()}});
+
+(function(){const ch=$("choose");if(!ch)return;ch.hidden=false;
+ const first=ch.querySelector(".pick--game");
+ if(document.documentElement.classList.contains("choosing"))setTimeout(()=>first.focus(),50);
+ ch.querySelectorAll(".pick").forEach(b=>b.onclick=()=>{const m=b.dataset.m;document.documentElement.dataset.mode=m;
+  try{sessionStorage.setItem("mbs-chosen","1");localStorage.setItem("mbs-mode",m)}catch(e){}
+  document.querySelectorAll('input[name="mode"]').forEach(r=>r.checked=r.value===m);
+  document.documentElement.classList.remove("choosing");render();renderVal();show("top");$("pl").blur()});
+ ch.addEventListener("keydown",e=>{if(e.key==="Tab"){const bs=[...ch.querySelectorAll(".pick")];const i=bs.indexOf(document.activeElement);e.preventDefault();bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}if(e.key==="ArrowLeft"||e.key==="ArrowRight")ch.querySelectorAll(".pick")[e.key==="ArrowLeft"?0:1].focus()})})();
 </script>
 </body>
 </html>
