@@ -93,7 +93,6 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 .cols,.col{display:grid;gap:.75rem;align-content:start}
 .foot{margin-top:1.5rem;padding:1rem 0 0}
 [data-mode="game"] .foot{background:none;border-top:1px solid var(--rule)}
-[data-mode="game"] .hero{padding-bottom:1.5rem}
 /* One-screen layout: Game mode on roomy screens. Article mode and small screens scroll within a tab. */
 @media(min-width:1000px) and (min-height:620px){
  html[data-mode="game"],[data-mode="game"] body{height:100%;overflow:hidden}
@@ -125,11 +124,11 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
  [data-mode="game"] .team{min-height:1.6rem;padding:.1rem .3rem}
  [data-mode="game"] .panel h3{font-size:1.2rem}
  [data-mode="game"] .panel .cap{margin-bottom:.4rem}
- [data-mode="game"] .hero{display:flex;flex-direction:column;justify-content:safe center;padding:.75rem 0}
- [data-mode="game"] h1{font-size:clamp(2.25rem,6.2vh,3.75rem)}
- [data-mode="game"] .hero__dek{font-size:1.125rem}
- [data-mode="game"] .hero__answer{padding:.9rem 1.2rem}
- [data-mode="game"] .hero__line{margin:.6rem 0 .9rem max(var(--gutter),calc((100% - var(--max)) / 2))}
+ [data-mode="game"] .hero{padding:1rem 0}
+ [data-mode="game"] h1{font-size:clamp(2.5rem,min(11vh,7vw),6.75rem)}
+ [data-mode="game"] .hero__line{margin:1rem 0 1.1rem max(var(--gutter),calc((100% - var(--max)) / 2))}
+ [data-mode="game"] .hero__dek{font-size:clamp(1rem,2.6vh,1.375rem)}
+ [data-mode="game"] .hero__answer{padding:.9rem 1.2rem;font-size:.9375rem;line-height:1.45}
  [data-mode="game"] .foot{margin-top:.6rem;padding-top:.6rem;font-size:.8125rem;line-height:1.45}
  [data-mode="game"] .go{margin-top:1rem}
 }
