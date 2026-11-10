@@ -82,6 +82,16 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 .note{margin:1rem 0 0;padding:.875rem 1.125rem;font:400 .9375rem/1.5 var(--ui);background:var(--panel);border-left:4px solid var(--accent);border-radius:var(--radius)}
 [data-mode="article"] .note{background:none}
 .legend svg{display:inline-block}
+#bars text,#curve1 text,#curve2 text{font-size:14.5px}
+#scatter text{font-size:16px}#scatter .sel-label{font-size:17px}
+#val text{font-size:16px}
+.legend li{white-space:nowrap}
+.legend li:last-child{white-space:normal;flex-basis:100%}
+.lnk{align-self:start;padding:.25rem 0;font:600 .875rem/1.2 var(--ui);color:var(--soft);background:none;border:0;border-bottom:1px solid var(--edge);cursor:pointer}
+.lnk:hover{color:var(--ink);border-bottom-color:var(--ink)}
+[data-mode="game"] .panel{border:1px solid var(--rule)}
+[data-mode="game"] .tile{border-left:3px solid var(--accent)}
+[data-mode="game"] .sec--alt .panel{border-color:var(--rule)}
 .foot{text-align:center}
 .foot .wrap{max-width:none;padding-left:clamp(1rem,4vw,3rem);padding-right:clamp(1rem,4vw,3rem)}
 .foot p{max-width:none;margin:0 auto .5rem}
@@ -106,15 +116,17 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
  [data-mode="game"] body{display:flex;flex-direction:column}
  [data-mode="game"] .masthead{position:static;flex:none}
  [data-mode="game"] main{flex:1;min-height:0;display:flex;flex-direction:column}
- [data-mode="game"] main>section{flex:1;min-height:0;overflow:auto;padding:.75rem 0}
- [data-mode="game"] .sec>.wrap{height:100%;max-width:none}
- [data-mode="game"] .cols{gap:1rem;align-items:stretch}
+ [data-mode="game"] main>section{flex:1;min-height:0;overflow:auto;padding:1rem 0 1.25rem;display:flex;flex-direction:column}
+ [data-mode="game"] .sec>.wrap{flex:1;min-height:0}
+ [data-mode="game"] .cols{gap:1.25rem;align-items:stretch;grid-template-rows:minmax(0,1fr)}
  [data-mode="game"] .c1{grid-template-columns:minmax(0,.85fr) minmax(0,1fr) minmax(0,1.15fr)}
  [data-mode="game"] .c2{grid-template-columns:repeat(3,minmax(0,1fr))}
  [data-mode="game"] .c3{grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr)}
  [data-mode="game"] .col{display:flex;flex-direction:column;gap:.6rem;min-height:0}
+ [data-mode="game"] .col>.panel:has(#bars){flex:0 0 auto}
  [data-mode="game"] .col>.panel{flex:1 1 0;min-height:0;display:flex;flex-direction:column;padding:.75rem}
  [data-mode="game"] .panel svg{flex:1 1 0;min-height:0;width:100%;height:100%}
+ [data-mode="game"] .panel #bars{flex:0 0 auto;height:auto}
  [data-mode="game"] .panel .legend{flex:none}
  [data-mode="game"] .sec__head{display:block;margin:0}
  [data-mode="game"] h2{max-width:none;margin-bottom:.4rem;font-size:clamp(1.5rem,3.6vh,2.1rem)}
@@ -214,6 +226,7 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 <section class="sec" id="q1" aria-labelledby="h1" hidden>
   <div class="wrap cols c1">
     <div class="col">
+    <button class="lnk" data-t="top">← Change player or team</button>
     <div class="sec__head">
       <h2 id="h1"></h2>
       <div class="sec__intro"><p>A receiver is "open" when he has space from the nearest defender. The scores are the <strong>extra yards of space</strong> he gets compared with a typical player lined up in the same spot. Above 0 is better than typical.</p></div>
@@ -223,7 +236,7 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
     </div>
     <div class="col">
       <figure class="panel"><h3>Extra space vs a typical player</h3><p class="cap">Yards from the nearest defender when the ball is thrown</p><svg id="bars" viewBox="0 0 440 150" role="img" aria-label="Man and zone score"></svg></figure>
-      <figure class="panel"><h3>How quickly he gets open</h3><p class="cap">Of 100 routes, how many are open by each second after the snap</p><svg id="curve1" viewBox="0 0 440 210" role="img" aria-label="Open-time curve"></svg></figure>
+      <figure class="panel"><h3>How quickly he gets open</h3><p class="cap">Of 100 routes, how many are open by each second after the snap</p><svg id="curve1" viewBox="0 0 440 360" role="img" aria-label="Open-time curve"></svg></figure>
     </div>
     <div class="col">
     <figure class="panel">
@@ -238,16 +251,17 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 <section class="sec sec--alt" id="q2" aria-labelledby="h2" hidden>
   <div class="wrap cols c2">
     <div class="col">
+    <button class="lnk" data-t="top">← Change player or team</button>
     <div class="sec__head">
       <h2 id="h2"><span class="q" aria-hidden="true">Part 2</span>If he joined another team</h2>
-      <div class="sec__intro"><p>Quarterbacks throw at different speeds. A fast thrower needs receivers who get open early. We check how often he would already be open by the time that team's QB lets go. Change the team in the top bar.</p></div>
+      <div class="sec__intro"><p>Quarterbacks throw at different speeds. A fast thrower needs receivers who get open early. We check how often he would already be open by the time that team's QB lets go. Click any team on the right to compare.</p></div>
     </div>
     <p class="verdict" id="verdict2"></p>
     <div class="tiles" id="tiles2"></div>
     <p class="note"><strong>This means "open in time", not "more passes thrown to him".</strong> In our data, being open early did not reliably lead to more targets.</p>
     </div>
     <div class="col">
-      <figure class="panel"><h3>Is he open by the time the QB throws?</h3><p class="cap">The highlighted line is how long this team's QB usually waits before throwing</p><svg id="curve2" viewBox="0 0 440 240" role="img" aria-label="Open-time curve with team QB throw time"></svg></figure>
+      <figure class="panel"><h3>Is he open by the time the QB throws?</h3><p class="cap">The highlighted line is how long this team's QB usually waits before throwing</p><svg id="curve2" viewBox="0 0 440 520" role="img" aria-label="Open-time curve with team QB throw time"></svg></figure>
     </div>
     <div class="col">
       <figure class="panel"><h3>Every team, best to worst</h3><p class="cap">Click a team to compare. Highlighted bar = his current team.</p><div class="teams" id="teams"></div></figure>
@@ -341,7 +355,7 @@ function renderP1(){
       el("text",{x:v>=0?sc(v2)+6:sc(v2)-6,y:yy+22,"text-anchor":v>=0?"start":"end",style:"font-weight:600;fill:"+css("--ink")},sg(v)),
       el("text",{x:0,y:yy+50,style:"font-size:12px"},r+" routes"))});
   add(s,el("text",{x:220,y:146,"text-anchor":"middle"},"typical player"));
-  const {x,y}=chart($("curve1"),440,200,{l:40,r:10,t:10,b:24});
+  const {x,y}=chart($("curve1"),440,350,{l:40,r:10,t:10,b:24});
   if(p.med!=null){const c=$("curve1");add(c,el("line",{x1:x(p.med),x2:x(p.med),y1:y(0),y2:y(.5),stroke:css("--soft"),"stroke-dasharray":"4 4"}),el("text",{x:x(p.med)-6,y:y(.5)-8,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},"Half open by "+p.med.toFixed(1)+"s"))}
 }
 
@@ -350,7 +364,7 @@ function renderScatter(){
   const R=[-.8,.45],Z=[-.9,.5];
   const X=v=>m.l+(v-R[0])/(R[1]-R[0])*(W-m.l-m.r),Y=v=>H-m.b-(v-Z[0])/(Z[1]-Z[0])*(H-m.t-m.b);
   add(s,el("line",{x1:X(0),x2:X(0),y1:m.t,y2:H-m.b,class:"axis","stroke-width":2}),el("line",{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:"axis","stroke-width":2}),
-    el("text",{x:W-m.r,y:H-10,"text-anchor":"end"},"Better vs man →"),el("text",{x:m.l+4,y:m.t+12},"↑ Better vs zone"),el("text",{x:W-m.r-4,y:m.t+14,"text-anchor":"end",style:"font-size:15px;font-weight:600;opacity:.7"},"Good vs both"),el("text",{x:m.l+6,y:H-m.b-8,style:"font-size:15px;font-weight:600;opacity:.7"},"Weak vs both"));
+    el("text",{x:W-m.r,y:H-10,"text-anchor":"end"},"Better vs man →"),el("text",{x:m.l+4,y:m.t+12},"↑ Better vs zone"),el("text",{x:W-m.r-4,y:m.t+14,"text-anchor":"end",style:"font-size:20px;font-weight:600;opacity:.7"},"Good vs both"),el("text",{x:m.l+6,y:H-m.b-8,style:"font-size:20px;font-weight:600;opacity:.7"},"Weak vs both"));
   [...P.filter(q=>q!==cur),cur].forEach(p=>{const cx=X(Math.max(R[0]+.02,Math.min(R[1]-.02,p.ms))),cy=Y(Math.max(Z[0]+.02,Math.min(Z[1]-.02,p.zs))),sel=p===cur;
     const a={fill:sel?css("--sel"):css("--mark"),stroke:sel?css("--accent"):css("--bg"),"stroke-width":sel?3:1.5,class:"dot",tabindex:0,role:"button","aria-label":p.n+", "+p.pos+", "+p.team};
     const sh=p.pos==="WR"?el("circle",{...a,cx,cy,r:sel?10:7}):p.pos==="TE"?el("rect",{...a,x:cx-6,y:cy-6,width:12,height:12}):el("rect",{...a,x:cx-6,y:cy-6,width:12,height:12,transform:`rotate(45 ${cx} ${cy})`});
@@ -365,10 +379,10 @@ function renderP2(){
   const vals=Object.values(fit),mn=Math.min(...vals),mx=Math.max(...vals);
   const diff=(f-fo)*100;
   const rank=Object.values(fit).filter(v=>v>f).length+1;
-  $("verdict2").innerHTML=team===own?`${p.n} already plays for ${own}. Pick a different team in the top bar to compare.`:`With ${TN[team]}, ${p.n} would be open in time on ${pc(f)} of plays: ${Math.abs(diff).toFixed(1)} points ${diff>=0?"more":"fewer"} than with ${TN[own]}.`;
+  $("verdict2").innerHTML=team===own?`${p.n} already plays for ${own}. Click a different team to compare.`:`With ${TN[team]}, ${p.n} would be open in time on ${pc(f)} of plays: ${Math.abs(diff).toFixed(1)} points ${diff>=0?"more":"fewer"} than with ${TN[own]}.`;
   $("tiles2").innerHTML=tile("With "+team,pc(f),"of plays open before the throw")+tile("Now at "+own,pc(fo),"of plays open before the throw")+tile("Difference",(diff>=0?"+":"")+diff.toFixed(1),"percentage points",diff>=0?"pos":"neg")+tile("Team rank for him",rank+" of 32","1 = best match");
   $("live").innerHTML=team===own?`<b>${p.n}</b> at ${own}: open in time on <b>${pc(f)}</b> of plays.`:`<b>${p.n}</b> with <b>${team}</b>: open in time on <b>${pc(f)}</b> of plays (<b class="${diff>=0?"pos":"neg"}">${diff>=0?"+":""}${diff.toFixed(1)}</b> vs ${own}).`;
-  const {x,y}=chart($("curve2"),440,240,{l:40,r:10,t:14,b:24});
+  const {x,y}=chart($("curve2"),440,510,{l:40,r:10,t:14,b:24});
   const c=$("curve2"),v=at(p.cur,clk);
   add(c,el("line",{x1:x(clk),x2:x(clk),y1:y(0),y2:y(1),stroke:css("--accent"),"stroke-width":3}),
     el("text",{x:x(clk)-6,y:y(1)+14,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},team+" QB throws at ~"+clk.toFixed(1)+"s"),
@@ -384,10 +398,12 @@ function renderVal(){
   const all=D.val,ext=Math.max(...all.flatMap(r=>[Math.abs(r.pred_change),Math.abs(r.actual_change)]),12)*1.05;
   const px=Math.min(ext,8);
   const X=v=>m.l+(Math.max(-px,Math.min(px,v))+px)/(2*px)*(W-m.l-m.r),Y=v=>H-m.b-(Math.max(-40,Math.min(40,v))+40)/80*(H-m.t-m.b);
-  add(s,el("line",{x1:X(0),x2:X(0),y1:m.t,y2:H-m.b,class:"axis"}),el("line",{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:"axis"}),
+  add(s,el("rect",{x:X(0),y:m.t,width:W-m.r-X(0),height:Y(0)-m.t,fill:css("--ink"),opacity:.07}),el("rect",{x:m.l,y:Y(0),width:X(0)-m.l,height:H-m.b-Y(0),fill:css("--ink"),opacity:.07}),
+    el("text",{x:W-m.r-8,y:m.t+22,"text-anchor":"end",style:"font-weight:600;opacity:.8"},"Model right: both up"),el("text",{x:m.l+8,y:H-m.b-10,style:"font-weight:600;opacity:.8"},"Model right: both down"),
+    el("line",{x1:X(0),x2:X(0),y1:m.t,y2:H-m.b,class:"axis"}),el("line",{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:"axis"}),
     el("text",{x:W-m.r,y:H-8,"text-anchor":"end"},"What we predicted →"),el("text",{x:m.l+4,y:m.t+10},"↑ What happened"));
   all.forEach(r=>{const big=Math.min(r.routes_A,r.routes_B)>=50;
-    const c=el("circle",{cx:X(r.pred_change),cy:Y(r.actual_change),r:big?9:6,fill:big?css("--ink"):"none",stroke:big?css("--ink"):css("--edge"),"stroke-width":1.8});
+    const c=el("circle",{cx:X(r.pred_change),cy:Y(r.actual_change),r:big?11:7,fill:big?css("--ink"):"none",stroke:big?css("--ink"):css("--edge"),"stroke-width":1.8});
     c.appendChild(el("title",{},`${r.player} (${r.team}): ${r.qb_A} → ${r.qb_B}. Predicted ${r.pred_change}, actual ${r.actual_change}`));add(s,c)});
   add(s,el("text",{x:m.l+4,y:H-m.b-8},""));
 }
@@ -399,7 +415,7 @@ let cur_tab=null;
 function swap(id){TABS.forEach(t=>{const e=$(t);e.hidden=t!==id;e.classList.remove("enter")});$(id).classList.add("enter");$(id).scrollTop=0;document.querySelectorAll(".tab").forEach(b=>{const on=b.dataset.t===id;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1});try{history.replaceState(null,"","#"+id)}catch(e){}window.scrollTo(0,0)}
 function show(id){if(!TABS.includes(id))id="top";if(id===cur_tab)return;const first=cur_tab===null;cur_tab=id;
   if(!first&&document.startViewTransition&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.startViewTransition(()=>swap(id));else swap(id)}
-document.querySelectorAll(".go__c").forEach(b=>b.onclick=()=>show(b.dataset.t));
+document.querySelectorAll(".go__c,.lnk").forEach(b=>b.onclick=()=>show(b.dataset.t));
 document.querySelectorAll(".tab").forEach((b,i,all)=>{b.onclick=()=>show(b.dataset.t);b.onkeydown=e=>{const d=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(d){const n=all[(i+d+all.length)%all.length];n.focus();show(n.dataset.t);e.preventDefault()}}});
 window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
 show(location.hash.slice(1));
