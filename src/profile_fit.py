@@ -165,30 +165,40 @@ print(f"  target rate:       r = {r_tgt:.2f} [{ci_tgt[0]:.2f}, {ci_tgt[1]:.2f}]"
 
 # ------------------------------------------------------------------ Charts
 # Part 1
-fig, ax = plt.subplots(figsize=(10, 7.5))
+fig, ax = plt.subplots(figsize=(11, 7.5))
+pad_x = 0.18 * (prof["zone_score"].max() - prof["zone_score"].min())
+pad_y = 0.20 * (prof["man_score"].max() - prof["man_score"].min())
+ax.set_xlim(prof["zone_score"].min() - pad_x, prof["zone_score"].max() + pad_x)
+ax.set_ylim(prof["man_score"].min() - pad_y, prof["man_score"].max() + pad_y)
+ax.axhline(0, color="#bbb", ls="--", lw=1, zorder=0)
+ax.axvline(0, color="#bbb", ls="--", lw=1, zorder=0)
 ax.scatter(prof["zone_score"], prof["man_score"], s=prof["man_routes"] * 2.2, c=prof["pos"].map(COLORS),
-           alpha=0.75, edgecolor="white", lw=0.7)
-ax.axhline(0, color="#999", ls="--", lw=1)
-ax.axvline(0, color="#999", ls="--", lw=1)
-lab = pd.concat([prof.nlargest(4, "man_score"), prof.nlargest(4, "zone_score"), prof.nsmallest(3, "man_score"),
-                 prof.nsmallest(2, "zone_score")])
-lab = lab[~lab.index.duplicated()]
-for _, r in lab.iterrows():
-    left = r["displayName"] in ("Mike Evans",)
-    ax.annotate(r["displayName"], (r["zone_score"], r["man_score"]), xytext=(-5, -12) if left else (5, 4),
-                ha="right" if left else "left", textcoords="offset points", fontsize=8.5)
-xl, yl = ax.get_xlim(), ax.get_ylim()
-for x0, y0, t, ha, va in [(xl[1], yl[1], "BEATS BOTH", "right", "top"), (xl[0], yl[1], "MAN SPECIALIST", "left", "top"),
-                          (xl[1], yl[0], "ZONE SPECIALIST", "right", "bottom"),
-                          (xl[0], yl[0], "BELOW AVERAGE VS BOTH", "left", "bottom")]:
-    ax.text(x0, y0, t, ha=ha, va=va, fontsize=10, fontweight="bold", color="#888")
-ax.set_xlabel("Zone score: separation over expected vs ZONE (yards, shrunk for sample size)")
-ax.set_ylabel("Man score: separation over expected vs MAN (yards, shrunk)")
-ax.set_title("Part 1: How well does he get open, and against which coverage?\n"
-             f"{len(prof)} receivers vs players in the same alignment; bubble size = man routes; 2021 Weeks 1–8",
-             loc="left", fontsize=12)
+           alpha=0.75, edgecolor="white", lw=0.7, zorder=2)
+# one or two named examples per corner (the players in the README/METHODS table), each with a hand-set offset
+LABELS = {"Michael Pittman": (14, 16), "Hunter Henry": (14, -18), "Laviska Shenault": (8, 14),
+          "Amari Cooper": (-14, 12), "Kalif Raymond": (-16, 24), "K.J. Osborn": (-10, -22),
+          "Ja'Marr Chase": (14, 6), "Mike Evans": (6, -24), "Chris Godwin": (10, 16)}
+by_name = prof.set_index("displayName")
+for name, (dx, dy) in LABELS.items():
+    if name not in by_name.index:
+        continue
+    r = by_name.loc[name]
+    ax.annotate(name, (r["zone_score"], r["man_score"]), xytext=(dx, dy), textcoords="offset points",
+                ha="left" if dx > 0 else "right", va="center", fontsize=9, zorder=3,
+                bbox={"boxstyle": "round,pad=0.15", "fc": "white", "ec": "none", "alpha": 0.9},
+                arrowprops={"arrowstyle": "-", "color": "#888", "lw": 0.7, "shrinkA": 0, "shrinkB": 4})
+for x0, y0, t, ha, va in [(0.985, 0.975, "BEATS BOTH", "right", "top"), (0.015, 0.975, "MAN SPECIALIST", "left", "top"),
+                          (0.985, 0.025, "ZONE SPECIALIST", "right", "bottom"),
+                          (0.015, 0.025, "BELOW AVERAGE VS BOTH", "left", "bottom")]:
+    ax.text(x0, y0, t, transform=ax.transAxes, ha=ha, va=va, fontsize=10, fontweight="bold", color="#999")
+ax.set_xlabel("Zone score: separation over expected vs zone coverage (yards, shrunk for sample size)")
+ax.set_ylabel("Man score: separation over expected vs man coverage (yards, shrunk)")
+ax.set_title("How well does he get open, and against which coverage?\n"
+             f"{len(prof)} WRs and TEs, each compared with players in the same alignment; "
+             "bubble size = routes vs man; 2021 Weeks 1–8", loc="left", fontsize=12)
 handles = [plt.Line2D([], [], marker="o", ls="", color=c, label=k) for k, c in COLORS.items()]
-ax.legend(handles=[h for h in handles if h.get_label() in set(prof["pos"])], frameon=False, loc="center left")
+ax.legend(handles=[h for h in handles if h.get_label() in set(prof["pos"])], frameon=False,
+          loc="upper left", bbox_to_anchor=(1.01, 1.0))
 ax.spines[["top", "right"]].set_visible(False)
 fig.tight_layout()
 fig.savefig(f"{OUT}/profile_man_zone.png", dpi=150)
@@ -207,7 +217,7 @@ ax.set_yticks(range(len(sel)), [f"{r['displayName']} ({r['pos']}, {r['own_team']
               fontsize=9)
 ax.set_xlabel("Open before the throw: share of that team's dropbacks on which he'd already be open")
 ax.xaxis.set_major_formatter(lambda v, _: f"{v:.0f}%")
-ax.set_title("Part 2: If a team adds him, how often is he open before that team's QB throws?\n"
+ax.set_title("If a team adds him, how often is he open before that team's QB throws?\n"
              "18 receivers whose fit depends most on the QB. Red = worst fit, green = best fit,\n"
              "black tick = his current team", loc="left", fontsize=12)
 ax.spines[["top", "right"]].set_visible(False)
@@ -216,7 +226,16 @@ fig.savefig(f"{OUT}/qb_fit.png", dpi=150)
 
 # Validation
 fig, ax = plt.subplots(figsize=(7.5, 6.5))
-ax.scatter(val["pred_change"], val["actual_change"], c=val["pos"].map(COLORS), s=50, edgecolor="white")
+ax.scatter(val["pred_change"], val["actual_change"], c=val["pos"].map(COLORS), s=50, edgecolor="white", zorder=2)
+VAL_LABELS = {"Jamison Crowder": (-12, 14), "Mohamed Sanu": (12, 0), "Keelan Cole": (8, -42),
+              "Albert Wilson": (12, 0)}
+for _, r in val[val["player"].isin(VAL_LABELS)].iterrows():
+    dx, dy = VAL_LABELS[r["player"]]
+    ax.annotate(f"{r['player']} ({r['team']}: {r['qb_A'].split()[-1]} → {r['qb_B'].split()[-1]})",
+                (r["pred_change"], r["actual_change"]), xytext=(dx, dy), textcoords="offset points",
+                ha="left" if dx > 0 else "right", va="center", fontsize=8.5, zorder=3,
+                bbox={"boxstyle": "round,pad=0.15", "fc": "white", "ec": "none", "alpha": 0.9},
+                arrowprops={"arrowstyle": "-", "color": "#888", "lw": 0.7, "shrinkA": 0, "shrinkB": 4})
 m_, b_ = np.polyfit(x, y, 1)
 xs_ = np.linspace(x.min(), x.max(), 10)
 ax.plot(xs_, m_ * xs_ + b_, color="#444", ls="--", lw=1.2)
