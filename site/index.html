@@ -362,7 +362,7 @@ function renderP2(){
   add(c,el("line",{x1:x(clk),x2:x(clk),y1:y(0),y2:y(1),stroke:css("--accent"),"stroke-width":3}),
     el("text",{x:x(clk)-6,y:y(1)+14,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},team+" QB throws at ~"+clk.toFixed(1)+"s"),
     el("circle",{cx:x(clk),cy:y(v),r:6,fill:css("--accent"),stroke:css("--bg"),"stroke-width":2}),
-    el("text",{x:clk>2.8?x(clk)-10:x(clk)+10,y:y(v)+22,"text-anchor":clk>2.8?"end":"start",style:"font-weight:600;fill:"+css("--ink")},pc(v)+" open by then"));
+    el("text",{x:clk>2.8?x(clk)-10:x(clk)+10,y:clk>2.8?y(v)-12:y(v)+22,"text-anchor":clk>2.8?"end":"start",style:"font-weight:600;fill:"+css("--ink")},pc(v)+" open by then"));
   const rows=Object.entries(fit).sort((a,b)=>b[1]-a[1]);
   $("teams").innerHTML=rows.map(([t,v])=>`<button class="team ${t===team?"sel":""} ${t===own?"own":""}" aria-label="${t}" data-t="${t}"><span class="n">${t}</span><span class="t"><span class="b" style="width:${8+(v-mn)/(mx-mn||1)*92}%"></span></span><span class="v">${pc(v)}</span></button>`).join("");
   document.querySelectorAll(".team").forEach(b=>b.onclick=()=>{team=b.dataset.t;$("tm").value=team;render()});
