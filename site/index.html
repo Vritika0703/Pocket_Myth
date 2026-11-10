@@ -217,7 +217,7 @@ html:not(.choosing) #choose{display:none}
 #choose.fade{opacity:0}
 #choose.fade .pick>*{opacity:0;transition:opacity .25s}
 #sweep{position:fixed;left:0;right:0;z-index:210;pointer-events:none;transform-origin:left center;opacity:0}
-html[data-mode="game"] #sweep{top:38vh;height:10px;background:#ffd23f}
+html[data-mode="game"] #sweep{display:none}
 html[data-mode="article"] #sweep{top:0;height:4px;background:#c8102e}
 html[data-mode="game"] #sweep.go{animation:sweepG 1s cubic-bezier(.6,0,.2,1) both}
 html[data-mode="article"] #sweep.go{animation:sweepA .9s ease both}
