@@ -19,7 +19,7 @@ We answer one question for WRs and TEs, using 2021 NFL tracking data (Weeks 1–
 | **Beats both** (11) | Laviska Shenault, Michael Pittman, Hunter Henry, Cooper Kupp, Noah Fant |
 | **Man specialist** (10) | Amari Cooper, Kalif Raymond, Robby Anderson, Cole Beasley, Keenan Allen |
 | **Zone specialist** (5) | K.J. Osborn, Demarcus Robinson, Robert Woods, Tim Patrick |
-| **Below average vs both** (21) | Mike Williams, Ja'Marr Chase, Mike Evans, Chris Godwin (they produce without creating much separation) |
+| **Below average vs both** (21) | Mike Williams, Ja'Marr Chase, Mike Evans, Chris Godwin (they create little separation, yet QBs target them at least as often as expected) |
 
 Man and zone scores are related (r = 0.59): good separators tend to be good against both, but the specialists show where a coordinator should use a player. Full table: [`player_profiles.csv`](output/player_profiles.csv). Man-coverage scores: [`man_scores.csv`](output/man_scores.csv).
 
