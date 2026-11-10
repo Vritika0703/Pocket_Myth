@@ -15,6 +15,14 @@ We built the **Man-Beater Score**, a new metric for WRs, TEs and RBs: a player's
 
 All scores: [`output/man_beater_scores.csv`](output/man_beater_scores.csv) · per-route data: [`output/route_separation.csv`](output/route_separation.csv)
 
+## Bonus: does a receiver need a good offensive line? (Receiver-Line Fit)
+
+We also tested whether some receivers "fit" some offenses better: a receiver who gets open late should be wasted behind a line that collapses fast. For each team we measured **how long the pocket stays intact** (first frame a pass rusher gets within 2 yards of the QB, with a Kaplan-Meier curve so plays that end in a throw before any collapse still count), and for each receiver **when he first gets open** (≥3 yards from every coverage defender, ≥3 yards past the line, ≥0.5 s after the snap). The Fit Score is the share of his routes on which he gets open while that team's pocket would still be intact. **Finding: fit barely depends on the line.** Receivers get open early (median 1.6 s), before most pockets collapse, so a receiver's score moves only ~5–7 points between the best and worst pass-blocking teams. Team averages span just 49–54%, while receivers span 5–76%. For a coach deciding who to add, the receiver's own ability to get open matters far more than the line he would play behind. (Limitations: "open" uses fixed distance thresholds, open time also reflects route design, and a new team's QB and play-calling would change things.)
+
+![Fit heatmap](output/fit_heatmap.png)
+
+Fit scores for 99 players × 32 teams: [`output/fit_scores.csv`](output/fit_scores.csv)
+
 ## Reproduce (about 15 seconds)
 
 ```bash
@@ -22,6 +30,7 @@ git clone --depth 1 https://github.com/ThompsonJamesBliss/nfl-big-data-bowl-regi
 pip install -r requirements.txt
 python src/build_features.py   # -> output/route_separation.csv
 python src/man_beater.py       # -> scores CSV + 3 charts
+python src/fit_score.py        # -> fit scores + heatmap (bonus)
 ```
 
 `src/explore.py` and `src/traps.py` are the data checks we ran first: join keys, coverage labels, duplicate snap/throw events, where tracking ends, and target parsing.
