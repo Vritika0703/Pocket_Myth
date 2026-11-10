@@ -83,6 +83,13 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 .tab{min-height:44px;padding:.5rem 1rem;font:600 .9375rem/1 var(--ui);color:var(--soft);background:none;border:0;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer}
 .tab:hover{color:var(--ink)}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.go{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:1.5rem}
+.go__c{display:flex;flex-direction:column;gap:.25rem;padding:.9rem 1.1rem;text-align:left;font:400 .9375rem/1.35 var(--ui);color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-top:3px solid var(--accent);border-radius:var(--radius);cursor:pointer}
+.go__c b{font:800 1.375rem/1.1 var(--head)}
+[data-mode="article"] .go__c b{font-weight:600}
+.go__c span{color:var(--soft)}
+.go__c:hover{border-color:var(--ink);border-top-color:var(--accent)}
+@media(max-width:700px){.go{grid-template-columns:1fr}}
 .cols,.col{display:grid;gap:.75rem;align-content:start}
 .foot{margin-top:1.5rem;padding:1rem 0 0}
 [data-mode="game"] .foot{background:none;border-top:1px solid var(--rule)}
@@ -118,10 +125,13 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
  [data-mode="game"] .team{min-height:1.6rem;padding:.1rem .3rem}
  [data-mode="game"] .panel h3{font-size:1.2rem}
  [data-mode="game"] .panel .cap{margin-bottom:.4rem}
- [data-mode="game"] .hero{display:flex;flex-direction:column;justify-content:center;padding:1rem 0}
- [data-mode="game"] h1{font-size:clamp(2.5rem,8vh,4.75rem)}
- [data-mode="game"] .hero__line{margin:1rem 0 1.25rem max(var(--gutter),calc((100% - var(--max)) / 2))}
- [data-mode="game"] .foot{margin-top:1rem}
+ [data-mode="game"] .hero{display:flex;flex-direction:column;justify-content:safe center;padding:.75rem 0}
+ [data-mode="game"] h1{font-size:clamp(2.25rem,6.2vh,3.75rem)}
+ [data-mode="game"] .hero__dek{font-size:1.125rem}
+ [data-mode="game"] .hero__answer{padding:.9rem 1.2rem}
+ [data-mode="game"] .hero__line{margin:.6rem 0 .9rem max(var(--gutter),calc((100% - var(--max)) / 2))}
+ [data-mode="game"] .foot{margin-top:.6rem;padding-top:.6rem;font-size:.8125rem;line-height:1.45}
+ [data-mode="game"] .go{margin-top:1rem}
 }
 </style>
 </head>
@@ -163,6 +173,11 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
     </div>
     <div class="hero__answer"><p><strong>The short answer:</strong> it depends on his quarterback's speed. Pittsburgh's quick-throwing QB is a worse fit for every one of the 47 receivers. Philadelphia and Baltimore fit best. When seven teams changed QB mid-season, the model got the direction right for 71% of receivers.</p></div>
   </div>
+  <nav class="go wrap" aria-label="Jump to a section">
+    <button class="go__c" data-t="q1"><b>1 · Is he good?</b><span>How well he gets open against man and zone coverage.</span></button>
+    <button class="go__c" data-t="q2"><b>2 · New team</b><span>How often he would be open in time for another QB.</span></button>
+    <button class="go__c" data-t="proof"><b>3 · Proof</b><span>Tested on 7 real mid-season QB changes.</span></button>
+  </nav>
   <footer class="foot"><div class="wrap">
   <p><strong>Limits.</strong> Only 8 weeks of 2021 games, so one player has just 40 to 70 routes against man coverage and his score can be off. Part 2 is an informed estimate, tested on 7 teams, not a guarantee. "Open" means at least 3 yards past the line and 3 yards from every defender.</p>
   <p>Method and code: <a href="https://github.com/Vritika0703/man-beater-score">github.com/Vritika0703/man-beater-score</a> · <a href="https://github.com/Vritika0703/man-beater-score/blob/main/METHODS.md">METHODS.md</a>. Press <span class="kbd">/</span> to search players. Fonts: Barlow and Newsreader, SIL Open Font License.</p>
@@ -354,6 +369,7 @@ function render(){cp.sync();ct.sync();renderP1();renderScatter();renderP2()}
 render();renderVal();
 const TABS=["top","q1","q2","proof"];
 function show(id){if(!TABS.includes(id))id="top";TABS.forEach(t=>{$(t).hidden=t!==id});document.querySelectorAll(".tab").forEach(b=>{const on=b.dataset.t===id;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1});try{history.replaceState(null,"","#"+id)}catch(e){}window.scrollTo(0,0)}
+document.querySelectorAll(".go__c").forEach(b=>b.onclick=()=>show(b.dataset.t));
 document.querySelectorAll(".tab").forEach((b,i,all)=>{b.onclick=()=>show(b.dataset.t);b.onkeydown=e=>{const d=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(d){const n=all[(i+d+all.length)%all.length];n.focus();show(n.dataset.t);e.preventDefault()}}});
 window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
 show(location.hash.slice(1));
