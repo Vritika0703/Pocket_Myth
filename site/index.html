@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Receiver Fit: Is he good, and would he fit our QB?</title>
+<meta name="description" content="Pick an NFL receiver. See how he gets open against man and zone, then how often he would be open before another team's quarterback throws.">
+<style>
+@font-face{font-family:Barlow;font-weight:400;src:url(fonts/barlow-400.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Barlow;font-weight:600;src:url(fonts/barlow-600.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Barlow Condensed";font-weight:800;src:url(fonts/barlow-condensed-800.woff2) format("woff2");font-display:swap}
+:root{--bg:#faf9f6;--card:#fff;--ink:#17201c;--mut:#5d6862;--line:#e3e1da;--man:#c8102e;--zone:#1a6fb5;--ok:#14733f;--acc:#0c3326;--accfg:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1a15;--card:#13241d;--ink:#eef2ee;--mut:#9fb0a7;--line:#25382f;--man:#ff6b7f;--zone:#6bb4ee;--ok:#5fd08e;--acc:#ffd23f;--accfg:#0d1a15}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Barlow,system-ui,sans-serif}
+.w{max-width:960px;margin:0 auto;padding:0 16px}
+header{padding:40px 0 8px}
+h1{font:800 clamp(34px,6vw,56px)/1 "Barlow Condensed",Barlow,sans-serif;margin:0 0 10px;text-transform:uppercase;letter-spacing:.01em}
+h2{font:800 28px/1.1 "Barlow Condensed",Barlow,sans-serif;margin:0 0 4px;text-transform:uppercase}
+.lead{color:var(--mut);max-width:62ch;margin:0}
+.step{display:inline-block;font:600 13px Barlow;background:var(--acc);color:var(--accfg);border-radius:2px;padding:1px 8px;margin-bottom:6px}
+section{padding:36px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:20px;margin-top:16px}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+label{display:block;font:600 13px Barlow;color:var(--mut);margin-bottom:4px}
+select{font:600 16px Barlow;padding:9px 10px;border:1px solid var(--line);border-radius:3px;background:var(--card);color:var(--ink);min-width:230px;max-width:100%}
+select:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.big{font:800 44px/1 "Barlow Condensed",sans-serif}
+.tag{display:inline-block;font:600 14px Barlow;border:1px solid var(--line);border-radius:2px;padding:2px 9px;margin-right:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.mut{color:var(--mut)}
+.small{font-size:14px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font:400 12px Barlow,sans-serif;fill:var(--mut)}
+.axis{stroke:var(--line)}
+.team{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:1px 0;border:0;background:none;color:var(--ink);width:100%;text-align:left}
+.team .b{height:10px;border-radius:1px;background:var(--zone);opacity:.55}
+.team.sel .b{opacity:1;background:var(--acc)}
+.team.own .n{font-weight:600}
+.team .n{width:34px;font-weight:600}
+.team .v{width:44px;text-align:right;color:var(--mut)}
+.teams{max-height:520px;overflow:auto;padding-right:6px}
+.dot{cursor:pointer}
+.verdict{font-size:18px;margin:6px 0 0}
+.verdict b{font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14px}
+td,th{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--mut);font-weight:600}
+td.r,th.r{text-align:right}
+footer{padding:36px 0 60px;color:var(--mut);font-size:14px}
+a{color:inherit}
+.legend span{margin-right:14px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.note{border-left:3px solid var(--acc);padding:2px 12px;margin:14px 0 0;color:var(--mut);font-size:14px}
+</style>
+</head>
+<body>
+<div class="w">
+<header>
+  <h1>Is he good, and would he fit our quarterback?</h1>
+  <p class="lead">One question in two parts, for 47 NFL receivers (2021 tracking data, Weeks 1 to 8). First: how well does he get open, and against which coverage? Then: how often would he be open before <em>another team's</em> QB throws?</p>
+</header>
+
+<section id="q1">
+  <span class="step">Part 1</span>
+  <h2>How good is he at getting open?</h2>
+  <p class="lead">Pick a receiver. Scores compare him with players in the same alignment (outside, slot, inline TE, backfield). Above 0 is better than typical.</p>
+  <div class="card">
+    <div class="row">
+      <div><label for="pl">Receiver</label><select id="pl"></select></div>
+      <div id="tags"></div>
+    </div>
+    <p class="verdict" id="verdict"></p>
+    <div class="grid" style="margin-top:18px">
+      <div><div class="small mut" style="margin-bottom:6px">Separation vs a typical player, in yards</div><svg id="bars" viewBox="0 0 440 130" role="img" aria-label="Man and zone score"></svg></div>
+      <div><div class="small mut" style="margin-bottom:6px">When he gets open (share of routes open by each second after the snap)</div><svg id="curve1" viewBox="0 0 440 200" role="img" aria-label="Open-time curve"></svg></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="small mut" style="margin-bottom:6px">All 47 receivers: click a dot to select. Right = better vs man. Up = better vs zone.</div>
+    <svg id="scatter" viewBox="0 0 880 380" role="img" aria-label="Man score against zone score for all receivers"></svg>
+    <div class="legend small"><span><i style="background:var(--man)"></i>WR</span><span><i style="background:var(--zone);border-radius:0"></i>TE</span><span><i style="background:var(--mut);transform:rotate(45deg)"></i>RB</span><span>Fill = selected player</span></div>
+  </div>
+</section>
+
+<section id="q2">
+  <span class="step">Part 2</span>
+  <h2>Would he fit a new quarterback?</h2>
+  <p class="lead">His open-time curve is held against each team's dropback clock: the time its QB takes from snap to throw. The result is the share of that team's dropbacks on which he would already be open.</p>
+  <div class="card">
+    <div class="row">
+      <div><label for="tm">If he joined</label><select id="tm"></select></div>
+    </div>
+    <p class="verdict" id="verdict2"></p>
+    <div class="grid" style="margin-top:18px">
+      <div><div class="small mut" style="margin-bottom:6px">His curve vs the team's median QB clock</div><svg id="curve2" viewBox="0 0 440 220" role="img" aria-label="Open-time curve with team clock"></svg></div>
+      <div><div class="small mut" style="margin-bottom:6px">His fit with every team (click to compare)</div><div class="teams" id="teams"></div></div>
+    </div>
+  </div>
+  <div class="note">Fit is "open before the throw", not "how many targets". In our data, being open by the QB's clock barely predicted target rate (r = 0.09).</div>
+</section>
+
+<section id="proof">
+  <span class="step">Check</span>
+  <h2>Does it work when the QB changes?</h2>
+  <p class="lead">Seven teams changed quarterbacks in Weeks 1 to 8. For 28 receivers we learned the curve with QB A only, predicted the change with QB B from his dropback times alone, and compared with what happened.</p>
+  <div class="card">
+    <svg id="val" viewBox="0 0 880 360" role="img" aria-label="Predicted against actual change"></svg>
+    <p class="small mut" style="margin:8px 0 0">Each dot is a receiver. Change in share of routes open before the throw, in percentage points. r = 0.52 overall (p = 0.004), r = 0.93 for 11 receivers with 50+ routes under both QBs. The model gets the direction right but understates the size, about 3 times too small.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Why the QB and not the offensive line?</h2>
+  <p class="lead">We tested the idea that late-opening receivers are wasted behind a weak line. On real plays, late openers on weak-line teams got open, got targeted and caught the ball no worse than on strong-line teams. The QB's timing is the mismatch that shows up.</p>
+</section>
+
+<footer>
+  <b>Limits.</b> 8 weeks of data, about 40 to 70 man routes per player, so single scores have wide error. Part 2 is a grounded estimate, validated on 7 teams and 28 receivers, not a proven prediction of target share. "Open" means 3+ yards past the line and 3+ yards from every defender, at least 0.5 s after the snap.
+  <br><br>Source and method: <a href="https://github.com/Vritika0703/man-beater-score/blob/main/METHODS.md">METHODS.md</a>.
+</footer>
+</div>
+<script src="data.js"></script>
+<script>
+const D=window.DATA,$=id=>document.getElementById(id),NS="http://www.w3.org/2000/svg";
+const P=D.players.slice().sort((a,b)=>a.n.localeCompare(b.n));
+const byId=Object.fromEntries(P.map(p=>[p.id,p]));
+const teams=Object.keys(D.clock).sort();
+let cur=P.find(p=>p.n==="Hunter Henry")||P[0], team="BAL";
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const pc=x=>Math.round(x*100)+"%";
+const sg=x=>(x>=0?"+":"")+x.toFixed(2);
+function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e}
+function add(svg,...c){c.forEach(x=>svg.appendChild(x))}
+function level(s){return s>0.15?"strong":s>-0.15?"average":"below average"}
+
+/* selects */
+$("pl").innerHTML=P.map(p=>`<option value="${p.id}">${p.n} (${p.pos}, ${p.team})</option>`).join("");
+$("tm").innerHTML=teams.map(t=>`<option>${t}</option>`).join("");
+$("pl").onchange=e=>{cur=byId[e.target.value];render()};
+$("tm").onchange=e=>{team=e.target.value;render()};
+
+function at(c,t){const g=D.grid;if(t<=0)return c[0];const i=Math.min(Math.floor(t/0.1),g.length-1);const f=t/0.1-i;return i>=g.length-1?c[g.length-1]:c[i]*(1-f)+c[i+1]*f}
+
+function chart(svg,W,H,m,highlight){
+  svg.innerHTML="";
+  const x=t=>m.l+(t/4)*(W-m.l-m.r), y=v=>H-m.b-v*(H-m.t-m.b);
+  for(let v=0;v<=1;v+=.25){add(svg,el("line",{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),class:"axis"}),el("text",{x:m.l-6,y:y(v)+4,"text-anchor":"end"},pc(v)))}
+  for(let t=0;t<=4;t++)add(svg,el("text",{x:x(t),y:H-6,"text-anchor":"middle"},t+"s"));
+  const d=D.grid.map((t,i)=>(i?"L":"M")+x(t).toFixed(1)+" "+y(cur.cur[i]).toFixed(1)).join("");
+  add(svg,el("path",{d,fill:"none",stroke:css("--zone"),"stroke-width":2.5}));
+  return {x,y}
+}
+
+function renderP1(){
+  const p=cur;
+  $("tags").innerHTML=`<span class="tag">${p.pos}</span><span class="tag">${p.team}</span><span class="tag" style="background:var(--acc);color:var(--accfg);border-color:var(--acc)">${p.type}</span>`;
+  $("verdict").innerHTML=`<b>${p.n}</b>: ${level(p.ms)} vs man, ${level(p.zs)} vs zone. ${p.med==null?"He does not reach 50% open within 4 s.":`Half of his routes are open by ${p.med.toFixed(1)} s.`}`;
+  const s=$("bars");s.innerHTML="";
+  const sc=v=>220+v*(200/0.8), rows=[["Man",p.ms,p.mr,css("--man")],["Zone",p.zs,p.zr,css("--zone")]];
+  add(s,el("line",{x1:220,x2:220,y1:8,y2:112,stroke:css("--ink"),"stroke-width":1.5}));
+  rows.forEach(([n,v,r,c],i)=>{const yy=18+i*52,v2=Math.max(-.8,Math.min(.8,v));
+    add(s,el("text",{x:0,y:yy+22,style:"font-weight:600;fill:"+css("--ink")},n),
+      el("rect",{x:Math.min(220,sc(v2)),y:yy,width:Math.abs(sc(v2)-220),height:30,fill:c,rx:1}),
+      el("text",{x:v>=0?sc(v2)+6:sc(v2)-6,y:yy+20,"text-anchor":v>=0?"start":"end",style:"font-weight:600;fill:"+css("--ink")},sg(v)),
+      el("text",{x:0,y:yy+38,style:"font-size:11px"},r+" routes"))});
+  add(s,el("text",{x:220,y:128,"text-anchor":"middle"},"typical"));
+  const {x,y}=chart($("curve1"),440,200,{l:40,r:10,t:10,b:24});
+  if(p.med!=null){const c=$("curve1");add(c,el("line",{x1:x(p.med),x2:x(p.med),y1:y(0),y2:y(.5),stroke:css("--ink"),"stroke-dasharray":"3 3"}),el("text",{x:x(p.med)+4,y:y(.5)-6},"50% open at "+p.med.toFixed(1)+"s"))}
+}
+
+function renderScatter(){
+  const s=$("scatter"),W=880,H=380,m={l:44,r:12,t:10,b:30};s.innerHTML="";
+  const R=[-.8,.4],Z=[-.9,.5];
+  const X=v=>m.l+(v-R[0])/(R[1]-R[0])*(W-m.l-m.r),Y=v=>H-m.b-(v-Z[0])/(Z[1]-Z[0])*(H-m.t-m.b);
+  add(s,el("line",{x1:X(0),x2:X(0),y1:m.t,y2:H-m.b,class:"axis","stroke-width":1.5}),el("line",{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:"axis","stroke-width":1.5}),
+    el("text",{x:W-m.r,y:H-8,"text-anchor":"end"},"Man score →"),el("text",{x:m.l+4,y:m.t+10},"↑ Zone score"));
+  P.forEach(p=>{const cx=X(Math.max(R[0]+.02,Math.min(R[1]-.02,p.ms))),cy=Y(Math.max(Z[0]+.02,Math.min(Z[1]-.02,p.zs))),sel=p===cur;
+    const col=p.pos==="WR"?css("--man"):p.pos==="TE"?css("--zone"):css("--mut");
+    const a={fill:sel?col:"none",stroke:col,"stroke-width":sel?3:1.6,class:"dot",tabindex:0,role:"button","aria-label":p.n};
+    const sh=p.pos==="WR"?el("circle",{...a,cx,cy,r:sel?8:5.5}):p.pos==="TE"?el("rect",{...a,x:cx-5,y:cy-5,width:10,height:10}):el("rect",{...a,x:cx-5,y:cy-5,width:10,height:10,transform:`rotate(45 ${cx} ${cy})`});
+    sh.onclick=()=>pick(p);sh.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(p)}};
+    const t=el("title",{},`${p.n}: man ${sg(p.ms)}, zone ${sg(p.zs)}`);sh.appendChild(t);add(s,sh);
+    if(sel)add(s,el("text",{x:cx+12,y:cy+4,style:"font-weight:600;fill:"+css("--ink")},p.n))});
+}
+function pick(p){cur=p;$("pl").value=p.id;render()}
+
+function renderP2(){
+  const p=cur,fit=p.fit,own=p.team,f=fit[team],fo=fit[own],clk=D.clock[team];
+  const vals=Object.values(fit),mn=Math.min(...vals),mx=Math.max(...vals);
+  const diff=(f-fo)*100;
+  $("verdict2").innerHTML=team===own
+    ?`<b>${p.n}</b> is open before the throw on <b>${pc(f)}</b> of ${own} dropbacks (clock ${clk.toFixed(1)} s). Pick another team to compare.`
+    :`<b>${p.n}</b> would be open on <b>${pc(f)}</b> of ${team} dropbacks (clock ${clk.toFixed(1)} s), vs ${pc(fo)} at ${own} (clock ${D.clock[own].toFixed(1)} s): <b style="color:${diff>=0?css("--ok"):css("--man")}">${diff>=0?"+":""}${diff.toFixed(1)} points</b>.`;
+  const {x,y}=chart($("curve2"),440,220,{l:40,r:10,t:14,b:24});
+  const c=$("curve2"),v=at(p.cur,clk);
+  add(c,el("line",{x1:x(clk),x2:x(clk),y1:y(0),y2:y(1),stroke:css("--acc"),"stroke-width":2}),
+    el("text",{x:x(clk)+5,y:y(1)+4,style:"font-weight:600;fill:"+css("--ink")},team+" clock "+clk.toFixed(1)+"s"),
+    el("circle",{cx:x(clk),cy:y(v),r:5,fill:css("--acc")}),
+    el("text",{x:x(clk)-8,y:y(v)-8,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},pc(v)+" open"));
+  const rows=Object.entries(fit).sort((a,b)=>b[1]-a[1]);
+  $("teams").innerHTML=rows.map(([t,v])=>`<button class="team ${t===team?"sel":""} ${t===own?"own":""}" data-t="${t}"><span class="n">${t}</span><span class="b" style="width:${40+(v-mn)/(mx-mn||1)*160}px"></span><span class="v">${pc(v)}</span>${t===own?'<span class="small mut">own</span>':''}</button>`).join("");
+  document.querySelectorAll(".team").forEach(b=>b.onclick=()=>{team=b.dataset.t;$("tm").value=team;render()});
+}
+
+function renderVal(){
+  const s=$("val"),W=880,H=360,m={l:50,r:14,t:10,b:34};s.innerHTML="";
+  const all=D.val,ext=Math.max(...all.flatMap(r=>[Math.abs(r.pred_change),Math.abs(r.actual_change)]),12)*1.05;
+  const px=Math.min(ext,8);
+  const X=v=>m.l+(Math.max(-px,Math.min(px,v))+px)/(2*px)*(W-m.l-m.r),Y=v=>H-m.b-(Math.max(-40,Math.min(40,v))+40)/80*(H-m.t-m.b);
+  add(s,el("line",{x1:X(0),x2:X(0),y1:m.t,y2:H-m.b,class:"axis"}),el("line",{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:"axis"}),
+    el("text",{x:W-m.r,y:H-8,"text-anchor":"end"},"Predicted change (points) →"),el("text",{x:m.l+4,y:m.t+10},"↑ Actual change (points)"));
+  all.forEach(r=>{const big=Math.min(r.routes_A,r.routes_B)>=50;
+    const c=el("circle",{cx:X(r.pred_change),cy:Y(r.actual_change),r:big?7:5,fill:big?css("--acc"):"none",stroke:big?css("--acc"):css("--mut"),"stroke-width":1.8});
+    c.appendChild(el("title",{},`${r.player} (${r.team}): ${r.qb_A} → ${r.qb_B}. Predicted ${r.pred_change}, actual ${r.actual_change}`));add(s,c)});
+  add(s,el("text",{x:m.l+4,y:H-m.b-6},"Filled = 50+ routes under both QBs"));
+}
+
+function render(){renderP1();renderScatter();renderP2()}
+$("pl").value=cur.id;$("tm").value=team;
+render();renderVal();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{render();renderVal()});
+</script>
+</body>
+</html>
