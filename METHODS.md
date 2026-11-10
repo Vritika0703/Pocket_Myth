@@ -1,4 +1,4 @@
-# Methods and full results
+# Pocket_Myth: methods and full results
 
 *Short version: see [README.md](README.md).*
 
@@ -21,7 +21,7 @@ We answer one question for WRs and TEs, using 2021 NFL tracking data (Weeks 1–
 | **Zone specialist** (5) | K.J. Osborn, Demarcus Robinson, Robert Woods, Tim Patrick |
 | **Below average vs both** (21) | Mike Williams, Ja'Marr Chase, Mike Evans, Chris Godwin (players who win through contested catches, not separation) |
 
-Man and zone scores are related (r = 0.59): good separators tend to be good against both, but the specialists show where a coordinator should use a player. Full table: [`player_profiles.csv`](output/player_profiles.csv). Man-coverage scores: [`man_beater_scores.csv`](output/man_beater_scores.csv).
+Man and zone scores are related (r = 0.59): good separators tend to be good against both, but the specialists show where a coordinator should use a player. Full table: [`player_profiles.csv`](output/player_profiles.csv). Man-coverage scores: [`man_scores.csv`](output/man_scores.csv).
 
 ## Part 2: If a team adds him, would he fit that team's quarterback?
 
@@ -58,7 +58,7 @@ We first tested the common assumption that late-opening receivers are wasted beh
 ## Who uses it
 
 - **GMs and scouts:** Part 1 shows whether a receiver gets open and against what. Part 2 shows whether he'd be open in time with *your* quarterback.
-- **Offensive coordinators:** call man-beater routes for man specialists. With a quick-release QB, favor receivers who get open early.
+- **Offensive coordinators:** call routes that beat man coverage for man specialists. With a quick-release QB, favor receivers who get open early.
 
 ## Limitations
 
@@ -82,7 +82,7 @@ We first tested the common assumption that late-opening receivers are wasted beh
 git clone --depth 1 https://github.com/ThompsonJamesBliss/nfl-big-data-bowl-regional-event-data.git data-src
 pip install -r requirements.txt
 python src/build_features.py    # per-route separation at the throw, alignment, depth, target
-python src/man_beater.py        # Part 1: man-coverage scores, separation payoff numbers
+python src/man_score.py         # Part 1: man-coverage scores, separation payoff numbers
 python src/fit_score.py         # open-time and pocket curves for every player and team
 python src/profile_fit.py       # Part 1 profile, Part 2 QB fit, QB-change validation
 python src/fit_deep.py          # why the QB, not the line: model vs real plays (printed)

@@ -1,4 +1,4 @@
-"""Is this receiver good, and would he fit our quarterback?
+"""Pocket_Myth: Is this receiver good, and would he fit our quarterback?
 
 Part 1 - Player profile: how well does he get open, and against which coverage?
   Man score / Zone score = average separation at the throw vs a typical player in the same alignment

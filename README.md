@@ -1,4 +1,6 @@
-# Is this receiver good, and would he fit our quarterback?
+# Pocket_Myth
+
+**Is this receiver good, and would he fit our quarterback?**
 
 We built a tool that answers one question about NFL receivers: is he good at getting open, and would he fit a given team's quarterback? Using 2021 tracking data, it scores each WR and TE against man and zone coverage, then estimates how often he'd be open before each team's QB throws. Pittsburgh's quick release is the worst fit for every receiver, and tight ends depend on the quarterback the most. When seven teams changed quarterbacks mid-season, our predictions matched how 28 receivers' numbers actually changed (r = 0.52, rising to 0.93 for players with larger samples). Scouts and GMs can use it to judge a receiver and his fit; it predicts timing, not target share, and is based on 8 weeks of data.
 
