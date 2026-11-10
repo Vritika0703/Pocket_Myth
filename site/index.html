@@ -201,9 +201,12 @@ html:not(.choosing) #choose{display:none}
 
 
 /* Opening animation: chosen half expands, then the page builds in. Mode-specific. */
-#choose{transition:opacity .45s ease,grid-template-columns .65s cubic-bezier(.7,0,.2,1),grid-template-rows .6s cubic-bezier(.7,0,.2,1)}
+#choose{transition:opacity .45s ease,grid-template-columns .65s cubic-bezier(.7,0,.2,1)}
 .pick{min-width:0;overflow:hidden}
-#choose.leaving{pointer-events:none;grid-template-rows:minmax(0,0fr) minmax(0,1fr)}
+#choose.leaving{pointer-events:none}
+#choose.leaving .pick{margin-top:calc(-1*var(--hh,0px))}
+.pick{height:auto;align-self:stretch;transition:filter .25s,margin-top .5s cubic-bezier(.7,0,.2,1)}
+@media(max-width:700px){#choose.leaving .pick{margin-top:0}#choose.leaving .choose__head{opacity:0;transition:transform .5s cubic-bezier(.7,0,.2,1),opacity .3s}}
 .choose__head{min-height:0;overflow:hidden}
 #choose{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 #choose.pg{grid-template-columns:minmax(0,1fr) minmax(0,0fr)}
@@ -551,7 +554,7 @@ function playOpen(mode){const d=document.documentElement;if(matchMedia("(prefers
   document.querySelectorAll('input[name="mode"]').forEach(r=>r.checked=r.value===m);
   render();renderVal();show("top");$("pl").blur();
   if(matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.remove("choosing");return}
-  ch.classList.add("leaving",m==="game"?"pg":"pa");
+  ch.style.setProperty("--hh",ch.querySelector(".choose__head").offsetHeight+"px");ch.classList.add("leaving",m==="game"?"pg":"pa");
   setTimeout(()=>ch.classList.add("fade"),650);
   setTimeout(()=>{if(m==="article")articleIntro(()=>playOpen("article"));else playOpen(m)},560);
   setTimeout(()=>{document.documentElement.classList.remove("choosing");ch.classList.remove("leaving","pg","pa","fade")},1150)});
