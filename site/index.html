@@ -14,6 +14,9 @@ html{--good:#8fe3b0;--bad:#ff9a8f}
 html[data-mode="article"]{--good:#1d6b3a;--bad:#b00e28}
 .pos{color:var(--good)}.neg{color:var(--bad)}
 .controls{border-top:1px solid var(--rule)}
+#barslot #ctl>.wrap{max-width:none;padding:.4rem 0}
+#barslot #live{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#barslot .combo input{min-height:38px;padding-top:.3rem;padding-bottom:.3rem}
 .controls--hero{margin-top:1.25rem;margin-bottom:.75rem;border-top:0}
 .controls--hero>.wrap{max-width:none;padding:.75rem 1.1rem;background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius)}
 [data-mode="game"] .controls--hero>.wrap{background:var(--panel)}
@@ -291,6 +294,7 @@ html:not(.choosing) #choose{display:none}
     <button class="tab" role="tab" data-t="q2" aria-controls="q2">2 · New team</button>
     <button class="tab" role="tab" data-t="proof" aria-controls="proof">3 · Proof</button>
   </div></nav>
+  <div class="controls controls--bar" id="barslot" hidden></div>
 </header>
 
 <main id="main">
@@ -304,7 +308,7 @@ html:not(.choosing) #choose{display:none}
     </div>
     <div class="hero__answer"><p><strong>The short answer:</strong> it depends on his quarterback's speed. Pittsburgh's quick-throwing QB is a worse fit for every one of the 47 receivers. Philadelphia and Baltimore fit best. When seven teams changed QB mid-season, the model got the direction right for 71% of receivers.</p></div>
   </div>
-  <div class="controls controls--hero wrap"><div class="wrap">
+  <div class="controls controls--hero wrap" id="ctl"><div class="wrap">
     <div class="ctl"><label for="pl">Receiver</label><div class="combo" id="plc"><input id="pl" role="combobox" aria-expanded="false" aria-controls="pll" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search a player"><ul id="pll" role="listbox" aria-label="Receivers"></ul></div></div>
     <div class="ctl"><label for="tm">If he joins</label><div class="combo t" id="tmc"><input id="tm" role="combobox" aria-expanded="false" aria-controls="tml" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search a team"><ul id="tml" role="listbox" aria-label="Teams"></ul></div></div>
     <p id="live" aria-live="polite"></p>
@@ -321,7 +325,6 @@ html:not(.choosing) #choose{display:none}
 <section class="sec" id="q1" aria-labelledby="h1" hidden>
   <div class="wrap cols c1">
     <div class="col">
-    <button class="lnk" data-t="top">← Change player or team</button>
     <div class="sec__head">
       <h2 id="h1"></h2>
       <div class="sec__intro"><p>A receiver is "open" when he has space from the nearest defender. The scores are the <strong>extra yards of space</strong> he gets compared with a typical player lined up in the same spot. Above 0 is better than typical.</p></div>
@@ -346,7 +349,6 @@ html:not(.choosing) #choose{display:none}
 <section class="sec sec--alt" id="q2" aria-labelledby="h2" hidden>
   <div class="wrap cols c2">
     <div class="col">
-    <button class="lnk" data-t="top">← Change player or team</button>
     <div class="sec__head">
       <h2 id="h2"><span class="q" aria-hidden="true">Part 2</span>If he joined another team</h2>
       <div class="sec__intro"><p>Quarterbacks throw at different speeds. A fast thrower needs receivers who get open early. We check how often he would already be open by the time that team's QB lets go. Click any team on the right to compare.</p></div>
@@ -422,7 +424,7 @@ function combo(id,items,cur,onPick){
   return {sync:()=>{inp.value=label(cur())}}
 }
 const cp=combo("pl",P.map(p=>({v:p.id,label:p.n,sub:p.pos+" · "+p.team})),()=>cur.id,v=>{cur=byId[v];render()});
-const ct=combo("tm",teams.map(t=>({v:t,label:t,sub:TN[t],k:TN[t]})),()=>team,v=>{team=v;render();show("q2")});
+const ct=combo("tm",teams.map(t=>({v:t,label:t,sub:TN[t],k:TN[t]})),()=>team,v=>{team=v;render();if(curTab==="top")show("q2")});
 
 function at(c,t){const g=D.grid;if(t<=0)return c[0];const i=Math.min(Math.floor(t/0.1),g.length-1);const f=t/0.1-i;return i>=g.length-1?c[g.length-1]:c[i]*(1-f)+c[i+1]*f}
 
@@ -508,9 +510,11 @@ render();renderVal();
 const TABS=["top","q1","q2","proof"];
 let cur_tab=null;
 function swap(id){TABS.forEach(t=>{const e=$(t);e.hidden=t!==id;e.classList.remove("enter")});$(id).classList.add("enter");$(id).scrollTop=0;document.querySelectorAll(".tab").forEach(b=>{const on=b.dataset.t===id;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1});try{history.replaceState(null,"","#"+id)}catch(e){}window.scrollTo(0,0)}
-function show(id){if(!TABS.includes(id))id="top";if(id===cur_tab)return;const first=cur_tab===null;cur_tab=id;
+let curTab="top";
+function place(id){const n=$("ctl"),bar=$("barslot");if(id==="top"){n.classList.add("controls--hero");$("top").insertBefore(n,$("top").querySelector(".go"));bar.hidden=true}else if(id==="proof"){bar.hidden=true}else{n.classList.remove("controls--hero");bar.appendChild(n);bar.hidden=false}}
+function show(id){if(!TABS.includes(id))id="top";curTab=id;place(id);if(id===cur_tab)return;const first=cur_tab===null;cur_tab=id;
   if(!first&&document.startViewTransition&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.startViewTransition(()=>swap(id));else swap(id)}
-document.querySelectorAll(".go__c,.lnk").forEach(b=>b.onclick=()=>show(b.dataset.t));
+document.querySelectorAll(".go__c").forEach(b=>b.onclick=()=>show(b.dataset.t));
 document.querySelectorAll(".tab").forEach((b,i,all)=>{b.onclick=()=>show(b.dataset.t);b.onkeydown=e=>{const d=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(d){const n=all[(i+d+all.length)%all.length];n.focus();show(n.dataset.t);e.preventDefault()}}});
 window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
 show(location.hash.slice(1));
