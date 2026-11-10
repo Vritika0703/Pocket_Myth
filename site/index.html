@@ -78,6 +78,51 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
 .note{margin:1rem 0 0;padding:.875rem 1.125rem;font:400 .9375rem/1.5 var(--ui);background:var(--panel);border-left:4px solid var(--accent);border-radius:var(--radius)}
 [data-mode="article"] .note{background:none}
 .legend svg{display:inline-block}
+.tabs{border-top:1px solid var(--rule)}
+.tabs .wrap{display:flex;gap:.25rem;overflow-x:auto}
+.tab{min-height:44px;padding:.5rem 1rem;font:600 .9375rem/1 var(--ui);color:var(--soft);background:none;border:0;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.cols,.col{display:grid;gap:.75rem;align-content:start}
+.foot{margin-top:1.5rem;padding:1rem 0 0}
+[data-mode="game"] .foot{background:none;border-top:1px solid var(--rule)}
+[data-mode="game"] .hero{padding-bottom:1.5rem}
+/* One-screen layout: Game mode on roomy screens. Article mode and small screens scroll within a tab. */
+@media(min-width:1000px) and (min-height:620px){
+ html[data-mode="game"],[data-mode="game"] body{height:100%;overflow:hidden}
+ [data-mode="game"] body{display:flex;flex-direction:column}
+ [data-mode="game"] .masthead{position:static;flex:none}
+ [data-mode="game"] main{flex:1;min-height:0;display:flex;flex-direction:column}
+ [data-mode="game"] main>section{flex:1;min-height:0;overflow:auto;padding:.75rem 0}
+ [data-mode="game"] .sec>.wrap{height:100%;max-width:none}
+ [data-mode="game"] .cols{gap:1rem;align-items:stretch}
+ [data-mode="game"] .c1{grid-template-columns:minmax(0,.85fr) minmax(0,1fr) minmax(0,1.15fr)}
+ [data-mode="game"] .c2{grid-template-columns:repeat(3,minmax(0,1fr))}
+ [data-mode="game"] .c3{grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr)}
+ [data-mode="game"] .col{display:flex;flex-direction:column;gap:.6rem;min-height:0}
+ [data-mode="game"] .col>.panel{flex:1 1 0;min-height:0;display:flex;flex-direction:column;padding:.75rem}
+ [data-mode="game"] .panel svg{flex:1 1 0;min-height:0;width:100%;height:100%}
+ [data-mode="game"] .panel .legend{flex:none}
+ [data-mode="game"] .sec__head{display:block;margin:0}
+ [data-mode="game"] h2{max-width:none;margin-bottom:.4rem;font-size:clamp(1.5rem,3.6vh,2.1rem)}
+ [data-mode="game"] .sec__intro p{max-width:none;margin:0;font-size:.9375rem;line-height:1.4}
+ [data-mode="game"] .help{grid-template-columns:1fr;gap:.35rem;margin:0;padding:.6rem .85rem;font-size:.875rem;line-height:1.35}
+ [data-mode="game"] .tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;margin:0}
+ [data-mode="game"] .tile{padding:.6rem .75rem}
+ [data-mode="game"] .tile .v{font-size:clamp(1.75rem,4.6vh,2.5rem)}
+ [data-mode="game"] .tile .v.sm{font-size:clamp(1.15rem,3vh,1.5rem);padding-top:.25rem}
+ [data-mode="game"] .tile .s{font-size:.8125rem;line-height:1.3}
+ [data-mode="game"] .verdict{margin:.25rem 0;max-width:none;font-size:clamp(1.25rem,3vh,1.75rem)}
+ [data-mode="game"] .note{margin:0;padding:.6rem .85rem;font-size:.875rem;line-height:1.4}
+ [data-mode="game"] .teams{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 .75rem;overflow:auto}
+ [data-mode="game"] .team{min-height:1.6rem;padding:.1rem .3rem}
+ [data-mode="game"] .panel h3{font-size:1.2rem}
+ [data-mode="game"] .panel .cap{margin-bottom:.4rem}
+ [data-mode="game"] .hero{display:flex;flex-direction:column;justify-content:center;padding:1rem 0}
+ [data-mode="game"] h1{font-size:clamp(2.5rem,8vh,4.75rem)}
+ [data-mode="game"] .hero__line{margin:1rem 0 1.25rem max(var(--gutter),calc((100% - var(--max)) / 2))}
+ [data-mode="game"] .foot{margin-top:1rem}
+}
 </style>
 </head>
 <body>
@@ -99,6 +144,12 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
     <div class="ctl"><label for="tm">If he joins</label><div class="combo t" id="tmc"><input id="tm" role="combobox" aria-expanded="false" aria-controls="tml" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search a team"><ul id="tml" role="listbox" aria-label="Teams"></ul></div></div>
     <p id="live" aria-live="polite"></p>
   </div></div>
+  <nav class="tabs" aria-label="Sections"><div class="wrap" role="tablist">
+    <button class="tab" role="tab" data-t="top" aria-controls="top">Overview</button>
+    <button class="tab" role="tab" data-t="q1" aria-controls="q1">1 · Is he good?</button>
+    <button class="tab" role="tab" data-t="q2" aria-controls="q2">2 · New team</button>
+    <button class="tab" role="tab" data-t="proof" aria-controls="proof">3 · Proof</button>
+  </div></nav>
 </header>
 
 <main id="main">
@@ -112,46 +163,59 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
     </div>
     <div class="hero__answer"><p><strong>The short answer:</strong> it depends on his quarterback's speed. Pittsburgh's quick-throwing QB is a worse fit for every one of the 47 receivers. Philadelphia and Baltimore fit best. When seven teams changed QB mid-season, the model got the direction right for 71% of receivers.</p></div>
   </div>
+  <footer class="foot"><div class="wrap">
+  <p><strong>Limits.</strong> Only 8 weeks of 2021 games, so one player has just 40 to 70 routes against man coverage and his score can be off. Part 2 is an informed estimate, tested on 7 teams, not a guarantee. "Open" means at least 3 yards past the line and 3 yards from every defender.</p>
+  <p>Method and code: <a href="https://github.com/Vritika0703/man-beater-score">github.com/Vritika0703/man-beater-score</a> · <a href="https://github.com/Vritika0703/man-beater-score/blob/main/METHODS.md">METHODS.md</a>. Press <span class="kbd">/</span> to search players. Fonts: Barlow and Newsreader, SIL Open Font License.</p>
+</div></footer>
 </section>
 
-<section class="sec" id="q1" aria-labelledby="h1">
-  <div class="wrap">
+<section class="sec" id="q1" aria-labelledby="h1" hidden>
+  <div class="wrap cols c1">
+    <div class="col">
     <div class="sec__head">
       <h2 id="h1"></h2>
       <div class="sec__intro"><p>A receiver is "open" when he has space from the nearest defender. The scores are the <strong>extra yards of space</strong> he gets compared with a typical player lined up in the same spot. Above 0 is better than typical.</p></div>
     </div>
     <div class="help"><div><b>Man coverage</b><span>One defender follows him around the field.</span></div><div><b>Zone coverage</b><span>Defenders guard areas, and he has to find a gap.</span></div></div>
     <div class="tiles" id="tiles1"></div>
-    <div class="two">
+    </div>
+    <div class="col">
       <figure class="panel"><h3>Extra space vs a typical player</h3><p class="cap">Yards from the nearest defender when the ball is thrown</p><svg id="bars" viewBox="0 0 440 150" role="img" aria-label="Man and zone score"></svg></figure>
       <figure class="panel"><h3>How quickly he gets open</h3><p class="cap">Of 100 routes, how many are open by each second after the snap</p><svg id="curve1" viewBox="0 0 440 210" role="img" aria-label="Open-time curve"></svg></figure>
     </div>
-    <figure class="panel" style="margin-top:.75rem">
+    <div class="col">
+    <figure class="panel">
       <h3>Everyone side by side</h3><p class="cap">Click any mark to see that player. Further right = better against man. Higher = better against zone.</p>
-      <svg id="scatter" viewBox="0 0 880 440" role="img" aria-label="Man score against zone score for all 47 receivers"></svg>
+      <svg id="scatter" viewBox="0 0 560 520" role="img" aria-label="Man score against zone score for all 47 receivers"></svg>
       <ul class="legend" aria-hidden="true"><li><svg viewBox="0 0 12 12" width="12" height="12"><circle cx="6" cy="6" r="5"/></svg>WR</li><li><svg viewBox="0 0 12 12" width="12" height="12"><rect x="1.5" y="1.5" width="9" height="9"/></svg>TE</li><li><svg viewBox="0 0 12 12" width="12" height="12"><path d="M6 .5 11.5 6 6 11.5.5 6Z"/></svg>RB</li><li>Ringed = selected</li></ul>
     </figure>
+    </div>
   </div>
 </section>
 
-<section class="sec sec--alt" id="q2" aria-labelledby="h2">
-  <div class="wrap">
+<section class="sec sec--alt" id="q2" aria-labelledby="h2" hidden>
+  <div class="wrap cols c2">
+    <div class="col">
     <div class="sec__head">
       <h2 id="h2"><span class="q" aria-hidden="true">Part 2</span>If he joined another team</h2>
       <div class="sec__intro"><p>Quarterbacks throw at different speeds. A fast thrower needs receivers who get open early. We check how often he would already be open by the time that team's QB lets go. Change the team in the top bar.</p></div>
     </div>
     <p class="verdict" id="verdict2"></p>
     <div class="tiles" id="tiles2"></div>
-    <div class="two">
+    <p class="note"><strong>This means "open in time", not "more passes thrown to him".</strong> In our data, being open early did not reliably lead to more targets.</p>
+    </div>
+    <div class="col">
       <figure class="panel"><h3>Is he open by the time the QB throws?</h3><p class="cap">The highlighted line is how long this team's QB usually waits before throwing</p><svg id="curve2" viewBox="0 0 440 240" role="img" aria-label="Open-time curve with team QB throw time"></svg></figure>
+    </div>
+    <div class="col">
       <figure class="panel"><h3>Every team, best to worst</h3><p class="cap">Click a team to compare. Highlighted bar = his current team.</p><div class="teams" id="teams"></div></figure>
     </div>
-    <p class="note"><strong>This means "open in time", not "more passes thrown to him".</strong> In our data, being open early did not reliably lead to more targets.</p>
   </div>
 </section>
 
-<section class="sec" id="proof" aria-labelledby="h3">
-  <div class="wrap">
+<section class="sec" id="proof" aria-labelledby="h3" hidden>
+  <div class="wrap cols c3">
+    <div class="col">
     <div class="sec__head">
       <h2 id="h3"><span class="q" aria-hidden="true">Proof</span>We tested it on real QB changes</h2>
       <div class="sec__intro"><p>Seven teams switched quarterbacks mid-season. For 28 receivers we predicted how his "open in time" rate would change under the new QB, then compared with what really happened.</p></div>
@@ -162,18 +226,18 @@ svg text{font:400 12.5px var(--ui);fill:var(--soft)}
       <div class="tile"><div class="k">Players with lots of data</div><div class="v">0.93</div><div class="s">11 players, 50+ routes each</div></div>
       <div class="tile"><div class="k">Real vs predicted change</div><div class="v sm">~3× bigger</div><div class="s">trust the direction, not the size</div></div>
     </div>
-    <figure class="panel"><svg id="val" viewBox="0 0 880 400" role="img" aria-label="Predicted against actual change for 28 receivers"></svg>
+    <p class="note"><strong>What about the offensive line?</strong> We tested whether slow-to-get-open receivers struggle behind a weak line. They did not. How fast the QB throws is what matters.</p>
+    </div>
+    <div class="col">
+    <figure class="panel"><svg id="val" viewBox="0 0 760 520" role="img" aria-label="Predicted against actual change for 28 receivers"></svg>
       <ul class="legend"><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:var(--ink)"><circle cx="6" cy="6" r="5"/></svg>50+ routes under both QBs</li><li><svg viewBox="0 0 12 12" width="12" height="12" style="fill:none;stroke:var(--edge);stroke-width:2"><circle cx="6" cy="6" r="4.5"/></svg>fewer routes</li><li>Each mark is one receiver. Up and right = the model was right. Hover for the name.</li></ul>
     </figure>
-    <p class="note"><strong>What about the offensive line?</strong> We tested whether slow-to-get-open receivers struggle behind a weak line. They did not. How fast the QB throws is what matters.</p>
+    </div>
   </div>
 </section>
 </main>
 
-<footer class="foot"><div class="wrap">
-  <p><strong>Limits.</strong> Only 8 weeks of 2021 games, so one player has just 40 to 70 routes against man coverage and his score can be off. Part 2 is an informed estimate, tested on 7 teams, not a guarantee. "Open" means at least 3 yards past the line and 3 yards from every defender.</p>
-  <p>Method and code: <a href="https://github.com/Vritika0703/man-beater-score">github.com/Vritika0703/man-beater-score</a> · <a href="https://github.com/Vritika0703/man-beater-score/blob/main/METHODS.md">METHODS.md</a>. Press <span class="kbd">/</span> to search players. Fonts: Barlow and Newsreader, SIL Open Font License.</p>
-</div></footer>
+
 <script src="data.js"></script>
 <script>
 const D=window.DATA,$=id=>document.getElementById(id),NS="http://www.w3.org/2000/svg";
@@ -207,7 +271,7 @@ function combo(id,items,cur,onPick){
   return {sync:()=>{inp.value=label(cur())}}
 }
 const cp=combo("pl",P.map(p=>({v:p.id,label:p.n,sub:p.pos+" · "+p.team})),()=>cur.id,v=>{cur=byId[v];render()});
-const ct=combo("tm",teams.map(t=>({v:t,label:t,sub:TN[t],k:TN[t]})),()=>team,v=>{team=v;render();$("q2").scrollIntoView({behavior:"smooth"})});
+const ct=combo("tm",teams.map(t=>({v:t,label:t,sub:TN[t],k:TN[t]})),()=>team,v=>{team=v;render();show("q2")});
 
 function at(c,t){const g=D.grid;if(t<=0)return c[0];const i=Math.min(Math.floor(t/0.1),g.length-1);const f=t/0.1-i;return i>=g.length-1?c[g.length-1]:c[i]*(1-f)+c[i+1]*f}
 
@@ -240,7 +304,7 @@ function renderP1(){
 }
 
 function renderScatter(){
-  const s=$("scatter"),W=880,H=440,m={l:44,r:14,t:14,b:34};s.innerHTML="";
+  const s=$("scatter"),W=560,H=520,m={l:44,r:14,t:14,b:34};s.innerHTML="";
   const R=[-.8,.45],Z=[-.9,.5];
   const X=v=>m.l+(v-R[0])/(R[1]-R[0])*(W-m.l-m.r),Y=v=>H-m.b-(v-Z[0])/(Z[1]-Z[0])*(H-m.t-m.b);
   add(s,el("line",{x1:X(0),x2:X(0),y1:m.t,y2:H-m.b,class:"axis","stroke-width":2}),el("line",{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),class:"axis","stroke-width":2}),
@@ -267,14 +331,14 @@ function renderP2(){
   add(c,el("line",{x1:x(clk),x2:x(clk),y1:y(0),y2:y(1),stroke:css("--accent"),"stroke-width":3}),
     el("text",{x:x(clk)-6,y:y(1)+14,"text-anchor":"end",style:"font-weight:600;fill:"+css("--ink")},team+" QB throws at ~"+clk.toFixed(1)+"s"),
     el("circle",{cx:x(clk),cy:y(v),r:6,fill:css("--accent"),stroke:css("--bg"),"stroke-width":2}),
-    el("text",{x:x(clk)+10,y:y(v)+22,"text-anchor":"start",style:"font-weight:600;fill:"+css("--ink")},pc(v)+" open by then"));
+    el("text",{x:clk>2.8?x(clk)-10:x(clk)+10,y:y(v)+22,"text-anchor":clk>2.8?"end":"start",style:"font-weight:600;fill:"+css("--ink")},pc(v)+" open by then"));
   const rows=Object.entries(fit).sort((a,b)=>b[1]-a[1]);
   $("teams").innerHTML=rows.map(([t,v])=>`<button class="team ${t===team?"sel":""} ${t===own?"own":""}" aria-label="${t}" data-t="${t}"><span class="n">${t}</span><span class="t"><span class="b" style="width:${8+(v-mn)/(mx-mn||1)*92}%"></span></span><span class="v">${pc(v)}</span></button>`).join("");
   document.querySelectorAll(".team").forEach(b=>b.onclick=()=>{team=b.dataset.t;$("tm").value=team;render()});
 }
 
 function renderVal(){
-  const s=$("val"),W=880,H=400,m={l:50,r:14,t:14,b:36};s.innerHTML="";
+  const s=$("val"),W=760,H=520,m={l:50,r:14,t:14,b:36};s.innerHTML="";
   const all=D.val,ext=Math.max(...all.flatMap(r=>[Math.abs(r.pred_change),Math.abs(r.actual_change)]),12)*1.05;
   const px=Math.min(ext,8);
   const X=v=>m.l+(Math.max(-px,Math.min(px,v))+px)/(2*px)*(W-m.l-m.r),Y=v=>H-m.b-(Math.max(-40,Math.min(40,v))+40)/80*(H-m.t-m.b);
@@ -288,6 +352,11 @@ function renderVal(){
 
 function render(){cp.sync();ct.sync();renderP1();renderScatter();renderP2()}
 render();renderVal();
+const TABS=["top","q1","q2","proof"];
+function show(id){if(!TABS.includes(id))id="top";TABS.forEach(t=>{$(t).hidden=t!==id});document.querySelectorAll(".tab").forEach(b=>{const on=b.dataset.t===id;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1});try{history.replaceState(null,"","#"+id)}catch(e){}window.scrollTo(0,0)}
+document.querySelectorAll(".tab").forEach((b,i,all)=>{b.onclick=()=>show(b.dataset.t);b.onkeydown=e=>{const d=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(d){const n=all[(i+d+all.length)%all.length];n.focus();show(n.dataset.t);e.preventDefault()}}});
+window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+show(location.hash.slice(1));
 document.querySelectorAll('input[name="mode"]').forEach(r=>{r.checked=r.value===document.documentElement.dataset.mode;r.onchange=()=>{document.documentElement.dataset.mode=r.value;try{localStorage.setItem("mbs-mode",r.value)}catch(e){}render();renderVal()}});
 document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement.tagName!=="INPUT"){e.preventDefault();$("pl").focus()}});
 </script>
